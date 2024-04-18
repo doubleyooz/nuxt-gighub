@@ -1,0 +1,10 @@
+{
+  "extends": [
+  
+    "@nuxtjs/eslint-config-typescript",
+  
+    "plugin:nuxt/recommended"
+  ],
+
+ 
+}
