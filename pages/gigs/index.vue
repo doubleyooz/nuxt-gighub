@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col gap-4 max-w-96">
-    <gig-card v-for="(item, index) in gigs" :key="index" v-bind="item" />
+    <gigs-card v-for="(item, index) in gigs" :key="index" v-bind="item" />
   </div>
 </template>
 

@@ -16,13 +16,12 @@
     </div>
     <span class="text-xl text-gray-800 text-ellipsis">{{ description }}</span>
     <div class="flex gap-2 overflow-auto">
-      <div
+      <custom-chip
         v-for="(item, index) in preferredTechnologies"
         :key="index"
+        :text="item"
         class="bg-slate-200 rounded-xl w-min px-2"
-      >
-        <span> {{ item }} </span>
-      </div>
+      />
     </div>
   </div>
 </template>
