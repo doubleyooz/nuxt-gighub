@@ -1,45 +1,75 @@
 <template>
   <div
-    class="flex rounded-xl w-min px-3 py-1 gap-1 items-center"
+    class="flex rounded-xl gap-1 items-center"
     :class="[
-      clickable ? 'cursor-pointer' : '',
+      sizeHeightPadding(),
+      clickable
+        ? `${clickableVariants[variant]} cursor-pointer`
+        : variants[variant],
       variant ?? '',
+      rounded ? 'rounded-full' : 'rounded-lg',
       outline ? '' : '!border-0',
       isHidden ? 'hidden' : '',
-      variants[variant],
-      disabled ? '' : '!border-gray-300 !bg-gray-100',
     ]"
     @click="emit('click:chip')"
   >
-    <span class="text-xs"> {{ text }} </span>
+    <Icon v-if="prependIcon" :name="prependIcon" />
+    <Icon v-if="icon" :name="icon" />
+    <span v-else class="text-base mb-0.5"> {{ text }}</span>
+    <Icon v-if="appendIcon" :name="appendIcon" />
     <button v-if="closeable" class="cursor-pointer mb-0.5" @click="handleClick">
-      <Icon name="mdi:close" color="black" />
+      <Icon name="mdi:close" />
     </button>
   </div>
 </template>
 
 <script setup lang="ts">
-export type Variant =
-  | "warning"
-  | "success"
-  | "error"
-  | "blue"
-  | "grey"
-  | "dark"
-  | "primary"
-  | "secondary";
-
 export interface ChipComponentType {
-  text: string;
+  text?: string;
   variant?: Variant;
   outline?: boolean;
   closeable?: boolean;
   clickable?: boolean;
-  disabled?: boolean;
+  rounded?: boolean;
+  prependIcon?: string;
+  appendIcon?: string;
+  size?: Size;
+  icon?: string;
 }
 const emit = defineEmits(["click:close", "click:chip"]);
 
-withDefaults(defineProps<ChipComponentType>(), { variant: "primary" });
+const props = withDefaults(defineProps<ChipComponentType>(), {
+  variant: "primary",
+  size: "medium",
+  text: undefined,
+  prependIcon: undefined,
+  appendIcon: undefined,
+  icon: undefined,
+});
+
+const sizeHeightPadding = () => {
+  let padding = props.rounded ? "p-2" : "px-3";
+  let height;
+  switch (props.size) {
+    case "x-small":
+      height = "h-6";
+      break;
+    case "small":
+      height = "h-7";
+      break;
+    case "medium":
+      height = "h-8";
+      break;
+    case "large":
+      height = "h-9";
+      padding = props.rounded ? "p-2" : "px-4";
+      break;
+    default:
+      height = "h-8";
+      break;
+  }
+  return `${height} ${padding}`;
+};
 
 const isHidden = ref(false);
 
@@ -49,16 +79,27 @@ const handleClick = () => {
 };
 
 const variants: Record<Variant, string> = {
-  blue: "bg-info--2 color-secondary-2 border border-secondary-2",
-  grey: "bg-gray-100 color-gray-600 border border-gray-600",
-  error: "bg-error--2 color-error-2 border border-error-2 ",
-  success: "bg-success--2 color-success-2 border border-success-2",
-  warning: "bg-warning--2 color-warning-2 border border-warning-2",
-  dark: "bg-primary color-white border border-white",
-  secondary:
-    "bg-gray-blue color-gray-600 border border-gray-600 [&.clickable]:hover:bg-gray-100 [&.clickable]:hover:color-secondary-2 active:bg-gray-900 active:color-white active:hover:bg-gray-600",
-  primary:
-    "bg-secondary--2 color-info-2 border border-info-2 [&.clickable]:hover:color-secondary-2 active:bg-secondary-0 active:color-white active:hover:bg-[#47d9eb] active:border-secondary-0",
+  blue: "bg-info text-white border border-secondary-700",
+  grey: "bg-gray-100 text-gray-600 border border-gray-600",
+  error: "bg-error text-white border border-error-700",
+  text: "text-gray-600 border border-gray-600",
+  success: "bg-success text-white border border-success-700",
+  warning: "bg-warning text-white border border-warning-700",
+  dark: "bg-primary text-white border border-white",
+  secondary: "bg-gray-blue text-gray-600 border border-gray-600 ",
+  primary: "bg-secondary text-white border border-secondary-700",
+};
+
+const clickableVariants: Record<Variant, string> = {
+  blue: `bg-info text-white border border-secondary-700 hover:bg-info-600 active:bg-info-700`,
+  grey: `bg-gray-100 text-gray-600 border border-gray-600 hover:bg-gray-200 active:bg-gray-300`,
+  error: `bg-error text-white border border-error-700 hover:bg-error-600 active:bg-error-700`,
+  text: "text-gray-600 hover:bg-gray-200 active:bg-gray-300`",
+  success: `bg-success text-white border border-success-700 hover:bg-success-600 active:bg-success-700`,
+  warning: `bg-warning text-white border border-warning-700 hover:bg-warning-600 active:bg-warning-700`,
+  dark: `bg-primary text-white border border-white hover:bg-primary-600 active:bg-primary-700`,
+  secondary: `bg-gray-blue text-gray-600 border border-gray-600 hover:bg-gray-blue-100 active:bg-gray-blue-200 active:text-gray-500`,
+  primary: `bg-secondary text-white border border-secondary-700 hover:bg-secondary-600 active:bg-secondary-700 active:color-white active:border-secondary`,
 };
 </script>
 
