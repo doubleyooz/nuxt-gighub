@@ -20,7 +20,8 @@
         v-for="(item, index) in preferredTechnologies"
         :key="index"
         :text="item"
-        class="bg-slate-200 rounded-xl w-min px-2"
+        variant="grey"
+        closeable
       />
     </div>
   </div>
