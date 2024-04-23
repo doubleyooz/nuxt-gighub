@@ -1,6 +1,5 @@
 <template>
   <div class="flex flex-col h-screen">
-    <custom-navbar username="name" />
     <main class="h-full">
       <slot />
     </main>

@@ -3,6 +3,11 @@ export default {
   content: [],
   theme: {
     extend: {
+      screens: {
+        xxs: "360px",
+        xs: "480px",
+      },
+
       colors: {
         primary: {
           DEFAULT: "#2e74b8",

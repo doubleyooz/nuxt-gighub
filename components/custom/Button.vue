@@ -1,6 +1,6 @@
 <template>
   <button
-    class="group flex w-100 items-center gap-1"
+    class="group flex w-100 justify-center items-center gap-1"
     :class="[
       outline ? '' : '!border-0',
       `!color`,
@@ -10,20 +10,25 @@
         ? `${disabledVariants[variant]} pointer-events-none`
         : variants[variant],
     ]"
-    :disabled="disabled"
+    :disabled="disabled || loading"
   >
-    <Icon v-if="prependIcon" :name="prependIcon" />
-    <Icon v-if="icon" :name="icon" />
-    <span v-else class="font-semibold mb-0.5"> {{ text }}</span>
-    <Icon v-if="appendIcon" :name="appendIcon" />
+    <Loader2 v-if="loading" class="h-full mr-2 animate-spin" />
+    <template v-else>
+      <Icon v-if="prependIcon" :name="prependIcon" />
+      <Icon v-if="icon" :name="icon" />
+      <span v-else class="font-semibold mb-0.5"> {{ text }}</span>
+      <Icon v-if="appendIcon" :name="appendIcon" />
+    </template>
   </button>
 </template>
 <script setup lang="ts">
+import { Loader2 } from "lucide-vue-next";
 export interface ButtonComponentType {
   text?: string;
   disabled?: boolean;
   outline?: boolean;
   rounded?: boolean;
+  loading?: boolean;
   color?: string;
   variant?: Variant;
   size?: Size;
@@ -72,9 +77,9 @@ const variants: Record<Variant, string> = {
   text: "text-gray-600 hover:bg-gray-200 active:bg-gray-300`",
   success: `bg-success text-white border border-success-700 hover:bg-success-600 active:bg-success-700`,
   warning: `bg-warning text-white border border-warning-700 hover:bg-warning-600 active:bg-warning-700`,
-  dark: `bg-primary text-white border border-white hover:bg-primary-600 active:bg-primary-700`,
+  dark: `bg-gray-950 text-white border border-white hover:bg-primary-900 active:bg-primary-700`,
   secondary: `bg-gray-blue text-gray-600 border border-gray-600 hover:bg-gray-blue-100 active:bg-gray-blue-200 active:text-gray-500`,
-  primary: `bg-secondary text-white border border-secondary-700 hover:bg-secondary-600 active:bg-secondary-700 active:color-white active:border-secondary`,
+  primary: `bg-primary text-white border border-secondary-700 hover:bg-secondary-600 active:bg-secondary-700 active:color-white active:border-secondary`,
 };
 
 const disabledVariants: Record<Variant, string> = {
@@ -84,8 +89,8 @@ const disabledVariants: Record<Variant, string> = {
   text: "text-gray-300",
   success: `bg-success-300 text-gray-400 border`,
   warning: `bg-warning-300 text-gray-400 border`,
-  dark: `bg-gray-700 text-gray-600 border border-white`,
+  dark: `bg-gray-700 text-gray-400 border border-white`,
   secondary: `bg-gray-blue-50 text-gray-300 border border-gray-300`,
-  primary: `bg-secondary-100 text-gray-300 border`,
+  primary: `bg-gray-300 text-gray-500 border`,
 };
 </script>
