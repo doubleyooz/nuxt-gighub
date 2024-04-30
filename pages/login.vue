@@ -27,7 +27,7 @@
         <custom-button
           class="w-full"
           text="Login"
-          :loading="loading"
+          :loading="authStore.loading"
           :disabled="disableButton"
           @click="submit"
         />
@@ -38,17 +38,16 @@
 
 <script setup lang="ts">
 definePageMeta({
+  middleware: "control-access",
   layout: "auth",
 });
-
 const { emailRules, passwordRules } = useFormRules();
+const authStore = useAuthStore();
 const email = ref("");
 const password = ref("");
 
 const isValidEmail = ref(true);
 const isValidPassword = ref(true);
-
-const loading = ref(false);
 
 const disableButton = computed(
   () =>
@@ -58,42 +57,6 @@ const disableButton = computed(
 );
 
 const submit = async () => {
-  loading.value = true;
-  const encodedCredentials = btoa(`${email.value}:${password.value}`);
-
-  // Set up the request options
-  const requestOptions = {
-    method: "POST", // or 'GET', depending on your API
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Basic ${encodedCredentials}`,
-    },
-    // If you need to send a body with your request, uncomment the following line
-    // body: JSON.stringify({ /* your data here */ })
-  };
-  console.log(process);
-  try {
-    // Make the request to the login endpoint
-    const response = await fetch(
-      `${process.env.appServer}/login`,
-      requestOptions
-    );
-
-    // Check if the request was successful
-    if (!response.ok) {
-      throw new Error("Login failed");
-    }
-
-    // If successful, you can process the response here
-    const data = await response.json();
-    console.log(data);
-
-    // Redirect the user or perform other actions as needed
-  } catch (error) {
-    console.error("Error:", error);
-    // Handle the error, e.g., show an error message to the user
-  }
-
-  loading.value = false;
+  await authStore.handleSignIn(email.value, password.value);
 };
 </script>
