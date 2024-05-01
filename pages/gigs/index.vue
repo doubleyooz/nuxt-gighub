@@ -1,121 +1,25 @@
 <template>
-  <div class="flex flex-col gap-4 max-w-96">
-    <gigs-card v-for="(item, index) in gigs" :key="index" v-bind="item" />
+  <div class="flex flex-col gap-4 w-full items-center">
+    <gigs-cards-create-gig />
+
+    <div v-if="data.length !== 0" class="flex flex-col gap-4 max-w-96">
+      <gigs-card
+        v-for="(item, index) in data"
+        :key="index"
+        :title="item.title"
+        :description="item.description"
+        :budget="item.budget"
+        :created-at="item.createdAt"
+        :preferred-technologies="item.preferredTechnologies"
+        :type="item.type"
+      />
+    </div>
+    <span v-else>Empty list</span>
   </div>
 </template>
 
 <script setup lang="ts">
+const gigStore = useGigStore();
 // Function to generate a random set of preferred technologies
-function generateRandomTechnologies() {
-  const sampleTechnologies = [
-    "JavaScript",
-    "React",
-    "Node.js",
-    "HTML",
-    "CSS",
-    "Python",
-    "Vue.js",
-    "Angular",
-    "Java",
-    "Swift",
-    "Ruby",
-    "PHP",
-    "Express.js",
-    "Django",
-    "Spring",
-    "Laravel",
-    "Bootstrap",
-  ];
-  const randomTechnologies = [];
-  for (let i = 0; i < 5; i++) {
-    const randomIndex = Math.floor(Math.random() * sampleTechnologies.length);
-    randomTechnologies.push(sampleTechnologies[randomIndex]);
-  }
-  return randomTechnologies;
-}
-
-// Populating gigs with ten different items
-const gigs = [
-  {
-    title: "title",
-    description: "description",
-    createdAt: new Date(),
-    budget: 400,
-    preferredTechnologies: generateRandomTechnologies(),
-    type: "Web",
-  },
-  {
-    title: "another title",
-    description:
-      "According as he hath chosen us in him before the foundation of the world, that we should be holy and without blame before him in love:",
-    createdAt: new Date(),
-    budget: 500,
-    preferredTechnologies: generateRandomTechnologies(),
-    type: "Mobile",
-  },
-  {
-    title: "one more title",
-    description: "one more description",
-    createdAt: new Date(),
-    budget: 600,
-    preferredTechnologies: generateRandomTechnologies(),
-    type: "Desktop",
-  },
-  {
-    title: "yet another title",
-    description: "yet another description",
-    createdAt: new Date(),
-    budget: 700,
-    preferredTechnologies: generateRandomTechnologies(),
-    type: "Web",
-  },
-  {
-    title: "title number five",
-    description: "description number five",
-    createdAt: new Date(),
-    budget: 800,
-    preferredTechnologies: generateRandomTechnologies(),
-    type: "Mobile",
-  },
-  {
-    title: "the sixth title",
-    description: "the sixth description",
-    createdAt: new Date(),
-    budget: 900,
-    preferredTechnologies: generateRandomTechnologies(),
-    type: "Desktop",
-  },
-  {
-    title: "seventh title",
-    description: "seventh description",
-    createdAt: new Date(),
-    budget: 1000,
-    preferredTechnologies: generateRandomTechnologies(),
-    type: "Embedded",
-  },
-  {
-    title: "lucky number eight title",
-    description: "lucky number eight description",
-    createdAt: new Date(),
-    budget: 1100,
-    preferredTechnologies: generateRandomTechnologies(),
-    type: "Web",
-  },
-  {
-    title: "ninth title",
-    description: "ninth description",
-    createdAt: new Date(),
-    budget: 1200,
-    preferredTechnologies: generateRandomTechnologies(),
-    type: "Mobile",
-  },
-  {
-    title: "title number ten",
-    description: "description number ten",
-    createdAt: new Date(),
-    budget: 1300,
-    preferredTechnologies: generateRandomTechnologies(),
-    type: "Desktop",
-  },
-];
+const data = await gigStore.fetchGigs();
 </script>

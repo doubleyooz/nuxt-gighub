@@ -29,8 +29,15 @@ export const useFormRules = () => {
       .required("confirm password is required"),
   };
 
+  const gigSchema = {
+    title: yup.string().min(3).max(25).trim(),
+    description: yup.string().min(6).max(300).trim(),
+    budget: yup.number().min(10),
+  };
+
   return {
     emailRules,
     passwordRules,
+    gigSchema,
   };
 };

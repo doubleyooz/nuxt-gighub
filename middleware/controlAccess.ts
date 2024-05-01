@@ -1,6 +1,10 @@
 export default defineNuxtRouteMiddleware(async (to, _from) => {
-  const authStore = useAuthStore();
-  console.log(authStore.accessToken);
-  await authStore.refreshToken();
-  if (authStore.accessToken) return navigateTo("/");
+  const config = useRuntimeConfig();
+  const { verifyAccessToken } = useAccessToken(config.public.appServer);
+
+  await verifyAccessToken();
+  const currentToken = useCookie("token");
+  if (currentToken.value) {
+    return navigateTo("/");
+  }
 });

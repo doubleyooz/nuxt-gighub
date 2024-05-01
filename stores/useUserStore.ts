@@ -6,13 +6,7 @@ export const useUserStore = defineStore("user", () => {
   const loading = ref(true);
   const config = useRuntimeConfig();
 
-  const authHeaders = (token: string) => {
-    return {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
-  };
+  const { authHeaders } = useAccessToken(config.public.appServer);
 
   async function loadUser(username: string) {
     if (loadedUser.value?.name === username) return;
@@ -21,7 +15,7 @@ export const useUserStore = defineStore("user", () => {
     try {
       const result = await fetch(
         `${config.public.appServer}/users?name=${username}`,
-        authHeaders(useCookie("token").value || "")
+        authHeaders()
       );
       loadedUser.value = (await result.json()).data[0];
 

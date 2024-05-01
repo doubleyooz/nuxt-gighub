@@ -7,7 +7,9 @@
         <span class="font-semibold">{{ title }}</span>
         <button>dsd</button>
       </div>
-      <span class="text-xs text-gray-500">{{ createdAt.getMinutes() }}</span>
+      <span v-if="createdAt" class="text-xs text-gray-500">{{
+        createdAt.getMinutes()
+      }}</span>
     </div>
     <div>
       <span
@@ -28,14 +30,9 @@
 </template>
 
 <script setup lang="ts">
-export interface GigCardComponentType {
-  title: string;
-  description: string;
-  createdAt: Date;
-  budget: number;
-  preferredTechnologies: string[];
-  type: string;
-}
+import type { Gig } from "~/models/gig.model";
+
+export interface GigCardComponentType extends Gig {}
 
 withDefaults(defineProps<GigCardComponentType>(), {});
 </script>

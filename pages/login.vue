@@ -11,19 +11,16 @@
             v-model="email"
             label="Email"
             name="email"
-            :schema="emailRules.email"
-            @is:valid="(x) => (isValidEmail = x)"
+            v-bind="emailProps"
           />
           <inputs-text-field
             v-model="password"
             label="Password"
             name="password"
-            :schema="passwordRules.password"
             type="password"
-            @is:valid="(x) => (isValidPassword = x)"
+            v-bind="passwordProps"
           />
         </div>
-
         <custom-button
           class="w-full"
           text="Login"
@@ -37,26 +34,35 @@
 </template>
 
 <script setup lang="ts">
+import { useForm } from "vee-validate";
+
 definePageMeta({
   middleware: "control-access",
   layout: "auth",
 });
 const { emailRules, passwordRules } = useFormRules();
 const authStore = useAuthStore();
-const email = ref("");
-const password = ref("");
 
-const isValidEmail = ref(true);
-const isValidPassword = ref(true);
+interface LoginForm {
+  email: string;
+  password: string;
+}
+
+const { controlledValues, handleSubmit, defineField, errors } =
+  useForm<LoginForm>({
+    validationSchema: { ...emailRules, password: passwordRules.password },
+  });
+
+const [email, emailProps] = defineField("email");
+const [password, passwordProps] = defineField("password");
 
 const disableButton = computed(
   () =>
-    !(isValidEmail.value && isValidPassword.value) ||
-    email.value === "" ||
-    password.value === ""
+    [email.value, password.value].some((v) => v === undefined) ||
+    Object.keys(errors.value).length !== 0
 );
 
-const submit = async () => {
-  await authStore.handleSignIn(email.value, password.value);
-};
+const submit = handleSubmit(async (values) => {
+  await authStore.handleSignIn(values.email, values.password);
+});
 </script>

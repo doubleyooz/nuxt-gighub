@@ -51,7 +51,6 @@
 
 <script setup lang="ts">
 import { useForm } from "vee-validate";
-import axios from "~/plugins/axios";
 
 definePageMeta({
   layout: "auth",

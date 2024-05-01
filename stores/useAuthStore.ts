@@ -9,7 +9,7 @@ export const useAuthStore = defineStore("auth", () => {
   const redirect =
     (route.query.redirect as string) || useCookie("redirect").value;
 
-  const loading = ref(true);
+  const loading = ref(false);
   const accessToken = useCookie("token");
 
   const setAccessToken = (str: string | null) => {
@@ -62,35 +62,10 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
-  const refreshToken = async () => {
-    try {
-      loading.value = true;
-      // Make the request to the login endpoint
-      const response = await fetch(`${config.public.appServer}/refresh-token`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
-
-      // Check if the request was successful
-      if (!response.ok) {
-        throw new Error("Refresh token failed");
-      }
-
-      // If successful, you can process the response here
-      const data = await response.json();
-      console.log(data);
-
-      // Handle the error, e.g., show an error message to the user
-    } catch (error) {
-      console.error("Error:", error);
-      setAccessToken(null);
-      // Handle the error, e.g., show an error message to the user
-    } finally {
-      loading.value = false;
-    }
+  return {
+    setAccessToken,
+    accessToken,
+    handleSignIn,
+    loading,
   };
-
-  return { setAccessToken, accessToken, refreshToken, handleSignIn, loading };
 });
