@@ -1,10 +1,14 @@
 export default defineNuxtRouteMiddleware(async (to, _from) => {
   const config = useRuntimeConfig();
-  const { verifyAccessToken } = useAccessToken(config.public.appServer);
+  const { verifyAccessToken, setAccessToken } = useAccessToken(
+    config.public.appServer
+  );
 
-  await verifyAccessToken();
-  const currentToken = useCookie("token");
-  if (currentToken.value) {
+  try {
+    await verifyAccessToken();
+
     return navigateTo("/");
+  } catch {
+    setAccessToken(null);
   }
 });

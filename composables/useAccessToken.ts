@@ -9,31 +9,30 @@ export const useAccessToken = (baseUrl: string) => {
   };
 
   const setAccessToken = (token: string | undefined | null) => {
+    useCookie("token").value = token;
+  };
+
+  const setSafeAccessToken = (token: string | undefined | null) => {
     if (!token) return;
     useCookie("token").value = token;
   };
 
   const refreshAccessToken = async () => {
-    try {
-      const response = await fetch(`${baseUrl}/refresh-token`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
+    const response = await fetch(`${baseUrl}/refresh-token`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
 
-      // Check if the request was successful
-      if (!response.ok) {
-        throw new Error("Refresh token failed");
-      }
-
-      // If successful, you can process the response here
-      const data = await response.json();
-      console.log({ refresh: data });
-    } catch (err) {
-      console.log({ err });
-      // useCookie("token").value = null;
+    // Check if the request was successful
+    if (!response.ok) {
+      throw new Error("Refresh token failed");
     }
+
+    // If successful, you can process the response here
+    const data = await response.json();
+    console.log({ refresh: data });
   };
 
   const verifyAccessToken = async () => {
@@ -56,5 +55,11 @@ export const useAccessToken = (baseUrl: string) => {
     }
   };
 
-  return { authHeaders, setAccessToken, refreshAccessToken, verifyAccessToken };
+  return {
+    authHeaders,
+    setAccessToken,
+    setSafeAccessToken,
+    refreshAccessToken,
+    verifyAccessToken,
+  };
 };

@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
+import type { User } from "~/models/user.model";
 
 export const useAuthStore = defineStore("auth", () => {
   const config = useRuntimeConfig();
@@ -11,6 +12,8 @@ export const useAuthStore = defineStore("auth", () => {
 
   const loading = ref(false);
   const accessToken = useCookie("token");
+
+  const loggedUser = ref<User>();
 
   const setAccessToken = (str: string | null) => {
     accessToken.value = str;
@@ -47,6 +50,7 @@ export const useAuthStore = defineStore("auth", () => {
       const { data, metadata } = await response.json();
       console.log({ auth: data, metadata });
       setAccessToken(metadata?.accessToken);
+      loggedUser.value = data;
       // Redirect the user or perform other actions as needed
       if (redirect) {
         router.push(redirect);
@@ -67,5 +71,6 @@ export const useAuthStore = defineStore("auth", () => {
     accessToken,
     handleSignIn,
     loading,
+    loggedUser,
   };
 });

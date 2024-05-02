@@ -12,6 +12,7 @@
         :created-at="item.createdAt"
         :preferred-technologies="item.preferredTechnologies"
         :type="item.type"
+        @open="navigateTo(`/gigs/${item.title}`)"
       />
     </div>
     <span v-else>Empty list</span>
@@ -19,7 +20,27 @@
 </template>
 
 <script setup lang="ts">
+import type { Gig } from "~/models/gig.model";
+
+definePageMeta({
+  middleware: "auth",
+  layout: "default",
+});
+
+const config = useRuntimeConfig();
+
+const { refreshAccessToken, setAccessToken } = useAccessToken(
+  config.public.appServer
+);
+
 const gigStore = useGigStore();
+const data = ref<Gig[]>([]);
 // Function to generate a random set of preferred technologies
-const data = await gigStore.fetchGigs();
+onBeforeMount(async () => {
+  try {
+    data.value = await gigStore.fetchGigs();
+  } catch (err) {
+    setAccessToken(null);
+  }
+});
 </script>

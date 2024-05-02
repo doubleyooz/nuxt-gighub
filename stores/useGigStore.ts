@@ -1,15 +1,23 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import type { Gig } from "~/models/gig.model";
+import type { User } from "~/models/user.model";
+
+export interface LoadedGig extends Gig {
+  user: User;
+}
 
 export const useGigStore = defineStore("gig", () => {
-  const loadedGig = ref<Gig>();
+  const loadedGig = ref<LoadedGig>();
   const loading = ref(true);
   const config = useRuntimeConfig();
 
-  const { authHeaders, setAccessToken, refreshAccessToken } = useAccessToken(
-    config.public.appServer
-  );
+  const {
+    authHeaders,
+    setSafeAccessToken,
+    setAccessToken,
+    refreshAccessToken,
+  } = useAccessToken(config.public.appServer);
 
   async function loadGig(title: string) {
     if (loadedGig.value?.title === title) return;
@@ -20,11 +28,29 @@ export const useGigStore = defineStore("gig", () => {
         `${config.public.appServer}/gigs?title=${title}`,
         authHeaders()
       );
+
+      if (!result.ok) {
+        setAccessToken(null);
+        throw new Error(`HTTP error! status: ${result.status}`);
+      }
       const rawResponse = await result.json();
       loadedGig.value = rawResponse.data[0];
 
-      setAccessToken(rawResponse.metadata?.accessToken);
-      console.log({ result: loadedGig.value });
+      setSafeAccessToken(rawResponse.metadata?.accessToken);
+
+      const userResult = await fetch(
+        `${config.public.appServer}/users/${rawResponse.data[0].userId}`,
+        authHeaders()
+      );
+      if (!userResult.ok) {
+        setAccessToken(null);
+        throw new Error(`HTTP error! status: ${userResult.status}`);
+      }
+      const rawResponse2 = await userResult.json();
+      console.log({ rawResponse2, loadedGig: loadedGig.value });
+      if (loadedGig.value) loadedGig.value.user = rawResponse2.data;
+
+      setSafeAccessToken(rawResponse.metadata?.accessToken);
     } catch (err) {
       console.log(err);
 
@@ -34,27 +60,31 @@ export const useGigStore = defineStore("gig", () => {
       loading.value = false;
     }
 
-    console.log({ result: loadedGig.value });
+    console.log({ loadedGig: loadedGig.value });
   }
 
   async function fetchGigs() {
-    const {
-      data: fetchedGigs,
-      pending,
-      error,
-      refresh,
-    } = await useFetch<{ data: Gig[]; metadata?: { accessToken: string } }>(
-      `${config.public.appServer}/gigs`,
-      {
-        headers: authHeaders().headers,
+    let data;
+    try {
+      const result = await fetch(
+        `${config.public.appServer}/gigs`,
+        authHeaders()
+      );
+
+      if (!result.ok) {
+        throw new Error(`HTTP error! status: ${result.status}`);
       }
-    );
+      const rawResponse = await result.json();
 
-    if (error.value) await refreshAccessToken();
-    console.log(error.value);
-    setAccessToken(fetchedGigs.value?.metadata?.accessToken);
-
-    return fetchedGigs.value?.data || [];
+      setSafeAccessToken(rawResponse.metadata?.accessToken);
+      console.log(rawResponse);
+      data = rawResponse.data;
+    } catch (err) {
+      console.log(err);
+      await refreshAccessToken();
+    }
+    console.log({ data });
+    return data || [];
   }
 
   return { loadGig, loadedGig, fetchGigs };

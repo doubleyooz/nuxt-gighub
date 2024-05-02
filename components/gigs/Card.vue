@@ -4,7 +4,9 @@
   >
     <div>
       <div class="flex text-2xl justify-between gap-2">
-        <span class="font-semibold">{{ title }}</span>
+        <span class="font-semibold cursor-pointer" @click="emit('open')">{{
+          title
+        }}</span>
         <button>dsd</button>
       </div>
       <span v-if="createdAt" class="text-xs text-gray-500">{{
@@ -33,6 +35,8 @@
 import type { Gig } from "~/models/gig.model";
 
 export interface GigCardComponentType extends Gig {}
+
+const emit = defineEmits(["open"]);
 
 withDefaults(defineProps<GigCardComponentType>(), {});
 </script>

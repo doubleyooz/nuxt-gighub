@@ -5,4 +5,5 @@ export interface Gig {
   budget: number;
   preferredTechnologies: string[];
   type: string;
+  userId?: string;
 }
