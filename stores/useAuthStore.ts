@@ -15,6 +15,11 @@ export const useAuthStore = defineStore("auth", () => {
 
   const loggedUser = ref<User>();
 
+  onBeforeMount(() => {
+    const storedUser = localStorage.getItem("loggedUser");
+    if (storedUser) loggedUser.value = JSON.parse(storedUser);
+  });
+
   const setAccessToken = (str: string | null) => {
     accessToken.value = str;
   };
@@ -65,6 +70,14 @@ export const useAuthStore = defineStore("auth", () => {
       loading.value = false;
     }
   };
+
+  watch(
+    loggedUser,
+    () => {
+      localStorage.setItem("loggedUser", JSON.stringify(loggedUser.value));
+    },
+    { deep: true }
+  );
 
   return {
     setAccessToken,

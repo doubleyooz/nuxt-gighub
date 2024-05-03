@@ -35,9 +35,16 @@ export const useFormRules = () => {
     budget: yup.number().min(10),
   };
 
+  const propositionSchema = {
+    description: yup.string().min(6).max(300).trim(),
+    budget: yup.number().min(10),
+    deadline: yup.number().min(1),
+  };
+
   return {
     emailRules,
     passwordRules,
     gigSchema,
+    propositionSchema,
   };
 };

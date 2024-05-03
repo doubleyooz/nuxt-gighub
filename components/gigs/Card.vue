@@ -20,7 +20,7 @@
     </div>
     <span class="text-xl text-gray-800 text-ellipsis">{{ description }}</span>
     <div class="flex gap-2 overflow-auto">
-      <custom-chip
+      <app-chip
         v-for="(item, index) in preferredTechnologies"
         :key="index"
         :text="item"

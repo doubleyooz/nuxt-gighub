@@ -15,7 +15,9 @@
   >
     <Icon v-if="prependIcon" :name="prependIcon" />
     <Icon v-if="icon" :name="icon" />
-    <span v-else class="text-base mb-0.5"> {{ text }}</span>
+    <span v-else class="text-base" :class="prependIcon ? '' : 'mb-0.5'">
+      {{ text }}</span
+    >
     <Icon v-if="appendIcon" :name="appendIcon" />
     <button v-if="closeable" class="cursor-pointer mb-0.5" @click="handleClick">
       <Icon name="mdi:close" />

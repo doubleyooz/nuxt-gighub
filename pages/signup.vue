@@ -1,7 +1,7 @@
 <template>
   <div class="grid xs:grid-cols-2 h-full">
     <div class="hidden xs:flex w-full bg-primary-800" />
-    <custom-card
+    <app-card
       title="login"
       :img="{ src: 'logo.png', height: 100, width: 100, alt: 'gighub' }"
     >
@@ -11,14 +11,14 @@
           class="flex flex-col gap-2 mb-4"
           @submit.prevent="submit"
         >
-          <inputs-text-field
+          <app-inputs-text-field
             v-model="email"
             label="Email"
             name="email"
             :schema="emailRules.email"
             @is:valid="(x) => (isValidEmail = x)"
           />
-          <inputs-text-field
+          <app-inputs-text-field
             v-model="password"
             label="Password"
             name="password"
@@ -27,7 +27,7 @@
             @is:valid="(x) => (isValidPassword = x)"
           />
 
-          <inputs-text-field
+          <app-inputs-text-field
             v-model="confirmPassword"
             label="Confirm Password"
             name="confirmPassword"
@@ -38,14 +38,14 @@
           />
         </form>
 
-        <custom-button
+        <app-button
           class="w-full"
           text="Sign up"
           :disabled="disableButton"
           :loading="loading"
         />
       </template>
-    </custom-card>
+    </app-card>
   </div>
 </template>
 

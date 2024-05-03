@@ -3,12 +3,6 @@
     <template #content>
       <div class="flex flex-col gap-2 mb-4">
         <app-inputs-text-field
-          v-model="title"
-          v-bind="titleProps"
-          label="Title"
-          name="title"
-        />
-        <app-inputs-text-field
           v-model="description"
           label="Description"
           name="description"

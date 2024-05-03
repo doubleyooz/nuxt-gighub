@@ -11,6 +11,7 @@ export const useGigStore = defineStore("gig", () => {
   const loadedGig = ref<LoadedGig>();
   const loading = ref(true);
   const config = useRuntimeConfig();
+  const authStore = useAuthStore();
 
   const {
     authHeaders,
@@ -87,5 +88,9 @@ export const useGigStore = defineStore("gig", () => {
     return data || [];
   }
 
-  return { loadGig, loadedGig, fetchGigs };
+  const isOwner = computed(
+    () => loadedGig.value?.userId === authStore.loggedUser?._id
+  );
+
+  return { loadGig, loadedGig, isOwner, fetchGigs };
 });

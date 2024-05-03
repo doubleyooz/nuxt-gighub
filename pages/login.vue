@@ -1,19 +1,20 @@
 <template>
   <div class="grid xs:grid-cols-2 h-full">
     <div class="hidden xs:flex w-full bg-primary-800" />
-    <custom-card
+    <app-card
       title="login"
       :img="{ src: 'logo.png', height: 100, width: 100, alt: 'gighub' }"
+      no-edit
     >
       <template #content>
         <div class="flex flex-col gap-2 mb-4">
-          <inputs-text-field
+          <app-inputs-text-field
             v-model="email"
             label="Email"
             name="email"
             v-bind="emailProps"
           />
-          <inputs-text-field
+          <app-inputs-text-field
             v-model="password"
             label="Password"
             name="password"
@@ -21,7 +22,7 @@
             v-bind="passwordProps"
           />
         </div>
-        <custom-button
+        <app-button
           class="w-full"
           text="Login"
           :loading="authStore.loading"
@@ -29,7 +30,7 @@
           @click="submit"
         />
       </template>
-    </custom-card>
+    </app-card>
   </div>
 </template>
 

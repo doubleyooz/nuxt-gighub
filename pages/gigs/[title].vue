@@ -18,10 +18,10 @@
       <span class="text-xl text-gray-800 text-ellipsis">{{
         gigStore.loadedGig.description
       }}</span>
-      <div>Created by {{ gigStore.loadedGig.user.name }}</div>
+      <div>Created by {{ gigStore.loadedGig.user?.name }}</div>
     </div>
     <div class="col-span-1">
-      <custom-button variant="blue" text="Bid" />
+      <app-button variant="blue" :text="gigStore.isOwner ? 'Edit' : 'Bid'" />
     </div>
   </div>
 </template>

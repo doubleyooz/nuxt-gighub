@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="flex flex-wrap w-100 gap-4 mt-2">
-      <custom-chip
+      <app-chip
         v-for="(item, index) in variants"
         :key="index"
         :text="item.text"
@@ -12,7 +12,7 @@
     </div>
 
     <div class="flex flex-wrap w-100 gap-4 mt-2">
-      <custom-chip
+      <app-chip
         v-for="(item, index) in variants"
         :key="index"
         :text="item.text"
@@ -22,7 +22,7 @@
     </div>
 
     <div class="flex flex-wrap w-100 gap-4 mt-2">
-      <custom-chip
+      <app-chip
         v-for="(item, index) in variants"
         :key="index"
         :text="item.text"
@@ -33,7 +33,7 @@
     </div>
 
     <div class="flex flex-wrap w-100 gap-4 mt-2">
-      <custom-chip
+      <app-chip
         v-for="(item, index) in variants"
         :key="index"
         :text="item.text"
@@ -44,7 +44,7 @@
     </div>
 
     <div class="flex flex-wrap w-100 gap-4 mt-2">
-      <custom-chip
+      <app-chip
         v-for="(item, index) in icons"
         :key="index"
         :icon="item.icon"
