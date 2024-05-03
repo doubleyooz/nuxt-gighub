@@ -22,12 +22,15 @@ export const useFormRules = () => {
             i18n.t('rules.password.character'),
           )
         .min(8, i18n.t('rules.password.min'))
-        */
+        
     confirmPassword: yup
       .string()
-      .oneOf([yup.ref("password")], "password must match")
-      .required("confirm password is required"),
+      .required("confirm password is required")
+      .oneOf([yup.ref("password")], "passwords must match"),
+        */
   };
+
+  const nameRules = { name: yup.string().min(3).max(25).trim() };
 
   const gigSchema = {
     title: yup.string().min(3).max(25).trim(),
@@ -44,6 +47,7 @@ export const useFormRules = () => {
   return {
     emailRules,
     passwordRules,
+    nameRules,
     gigSchema,
     propositionSchema,
   };

@@ -20,8 +20,9 @@
       }}</span>
       <div>Created by {{ gigStore.loadedGig.user?.name }}</div>
     </div>
-    <div class="col-span-1">
-      <app-button variant="blue" :text="gigStore.isOwner ? 'Edit' : 'Bid'" />
+    <div class="col-span-1 border-l-2 pl-2">
+      <app-button v-if="gigStore.isOwner" variant="blue" :text="'Edit'" />
+      <app-button v-else variant="blue" :text="'Place a bid'" />
     </div>
   </div>
 </template>

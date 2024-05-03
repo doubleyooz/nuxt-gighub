@@ -5,6 +5,7 @@ import type { User } from "~/models/user.model";
 export const useAuthStore = defineStore("auth", () => {
   const config = useRuntimeConfig();
 
+  const { authHeaders } = useAccessToken(config.public.appServer);
   const route = useRoute();
   const router = useRouter();
   const redirect =
@@ -71,6 +72,36 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
+  const handleSignUp = async (data: {
+    email: string;
+    password: string;
+    name: string;
+  }) => {
+    loading.value = true;
+    console.log(data);
+    try {
+      // Make the request to the login endpoint
+
+      const rawResponse = await fetch(`${config.public.appServer}/users`, {
+        method: "POST",
+        ...authHeaders(),
+        body: JSON.stringify(data),
+      });
+
+      // Check if the request was successful
+      if (!rawResponse.ok) {
+        throw new Error("Sign Up failed");
+      }
+
+      router.push("/login");
+    } catch (error) {
+      console.error("Error:", error);
+      // Handle the error, e.g., show an error message to the user
+    } finally {
+      loading.value = false;
+    }
+  };
+
   watch(
     loggedUser,
     () => {
@@ -83,6 +114,7 @@ export const useAuthStore = defineStore("auth", () => {
     setAccessToken,
     accessToken,
     handleSignIn,
+    handleSignUp,
     loading,
     loggedUser,
   };

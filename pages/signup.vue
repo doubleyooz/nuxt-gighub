@@ -2,8 +2,9 @@
   <div class="grid xs:grid-cols-2 h-full">
     <div class="hidden xs:flex w-full bg-primary-800" />
     <app-card
-      title="login"
+      title="Sign up"
       :img="{ src: 'logo.png', height: 100, width: 100, alt: 'gighub' }"
+      no-edit
     >
       <template #content>
         <form
@@ -12,37 +13,31 @@
           @submit.prevent="submit"
         >
           <app-inputs-text-field
+            v-model="name"
+            label="Name"
+            name="name"
+            v-bind="nameProps"
+          />
+          <app-inputs-text-field
             v-model="email"
             label="Email"
             name="email"
-            :schema="emailRules.email"
-            @is:valid="(x) => (isValidEmail = x)"
+            v-bind="emailProps"
           />
           <app-inputs-text-field
             v-model="password"
             label="Password"
             name="password"
-            :schema="passwordRules.password"
             type="password"
-            @is:valid="(x) => (isValidPassword = x)"
-          />
-
-          <app-inputs-text-field
-            v-model="confirmPassword"
-            label="Confirm Password"
-            name="confirmPassword"
-            placeholder="Repeat the password"
-            :schema="passwordRules.confirmPassword"
-            type="password"
-            @is:valid="(x) => (isValidPassword = x)"
+            v-bind="passwordProps"
           />
         </form>
-
         <app-button
           class="w-full"
           text="Sign up"
           :disabled="disableButton"
           :loading="loading"
+          @click="submit"
         />
       </template>
     </app-card>
@@ -57,53 +52,45 @@ definePageMeta({
 });
 const router = useRouter();
 const route = useRoute();
-const { emailRules, passwordRules } = useFormRules();
+const { emailRules, passwordRules, nameRules } = useFormRules();
 
 const redirect =
   (route.query.redirect as string) || useCookie("redirect").value;
 
 const hasError = ref(false);
-const errorMessage = ref("");
 
-const email = ref("");
-const password = ref("");
-const confirmPassword = ref("");
-
-const isValidEmail = ref(true);
-const isValidPassword = ref(true);
+const authStore = useAuthStore();
 const loading = ref(false);
+
+const { handleSubmit, errors, values, controlledValues, defineField } = useForm(
+  {
+    validationSchema: {
+      email: emailRules.email,
+      name: nameRules.name,
+      password: passwordRules.password,
+    },
+    keepValuesOnUnmount: true,
+  }
+);
+
+const [email, emailProps] = defineField("email");
+const [password, passwordProps] = defineField("password");
+const [name, nameProps] = defineField("name");
 
 const disableButton = computed(
   () =>
-    !(isValidEmail.value && isValidPassword.value) ||
-    email.value === "" ||
-    password.value === ""
+    [email.value, name.value, password.value].some((v) => v === undefined) ||
+    Object.keys(errors.value).length !== 0
 );
 
-const { handleSubmit, errors, values, controlledValues } = useForm({
-  validationSchema: { ...emailRules, ...passwordRules },
-  keepValuesOnUnmount: true,
-});
-
-const submit = handleSubmit(async () => {
+const submit = handleSubmit(async (values) => {
   loading.value = true;
-
-  try {
-    await useFetch("login", {});
-    if (redirect) {
-      router.push(redirect);
-      useCookie("redirect").value = null;
-    } else {
-      router.push("/");
-    }
-  } catch (err: unknown) {
-    hasError.value = true;
-    console.log(err);
-  } finally {
-    loading.value = false;
-    setTimeout(() => {
-      hasError.value = false;
-    }, 5000);
-  }
+  console.log("submit");
+  await authStore.handleSignUp({
+    email: values.email,
+    password: values.password,
+    name: values.name,
+  });
+  loading.value = false;
 });
 </script>
