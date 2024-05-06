@@ -11,6 +11,8 @@ export const useAuthStore = defineStore("auth", () => {
   const redirect =
     (route.query.redirect as string) || useCookie("redirect").value;
 
+  const { linkWallet } = useMetamask(config.public.appServer);
+
   const loading = ref(false);
   const accessToken = useCookie("token");
 
@@ -102,6 +104,40 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
+  const handleMetaSignIn = async () => {
+    loading.value = true;
+
+    try {
+      // Make the request to the login endpoint
+      const { user, address, accessToken } = await linkWallet();
+
+      if (!(accessToken && user)) {
+        router.push({ path: "/register" });
+        return;
+      }
+
+      if (accessToken) setAccessToken(accessToken);
+      if (user) loggedUser.value = { ...loggedUser.value, ...user };
+
+      if (redirect) {
+        router.push(redirect);
+        useCookie("redirect").value = null;
+      } else {
+        router.push("/");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      // Handle the error, e.g., show an error message to the user
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const logout = async () => {
+    accessToken.value = undefined;
+    loggedUser.value = undefined;
+  };
+
   watch(
     loggedUser,
     () => {
@@ -115,7 +151,9 @@ export const useAuthStore = defineStore("auth", () => {
     accessToken,
     handleSignIn,
     handleSignUp,
+    handleMetaSignIn,
     loading,
+    logout,
     loggedUser,
   };
 });

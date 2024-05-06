@@ -1,5 +1,5 @@
 <template>
-  <app-card title="new Gig">
+  <app-card title="New Proposition">
     <template #content>
       <div class="flex flex-col gap-2 mb-4">
         <app-inputs-text-field
@@ -16,11 +16,19 @@
           type="number"
           v-bind="budgetProps"
         />
+
+        <app-inputs-text-field
+          v-model="deadline"
+          label="Deadline"
+          name="deadline"
+          type="number"
+          v-bind="deadlineProps"
+        />
       </div>
 
       <app-button
         class="w-full"
-        text="Create new Gig"
+        text="Create New Proposition"
         :disabled="disableButton"
         @click="submit"
       />
@@ -30,33 +38,44 @@
 
 <script setup lang="ts">
 import { useForm } from "vee-validate";
-import type { Gig } from "~/models/gig.model";
+import type { Proposition } from "~/models/proposition.model";
+
 const config = useRuntimeConfig();
 
+export interface CreatePropositionComponentType {
+  gigId: string;
+  userId: string;
+}
+
+const props = withDefaults(defineProps<CreatePropositionComponentType>(), {});
+
 const { authHeaders } = useAccessToken(config.public.appServer);
-const { gigSchema } = useFormRules();
+const { propositionSchema } = useFormRules();
 
-const { controlledValues, handleSubmit, defineField, errors } = useForm<Gig>({
-  validationSchema: gigSchema,
-});
+const { controlledValues, handleSubmit, defineField, errors } =
+  useForm<Proposition>({
+    validationSchema: propositionSchema,
+  });
 
-const [title, titleProps] = defineField("title");
+const [deadline, deadlineProps] = defineField("deadline");
 const [description, descriptionProps] = defineField("description");
 const [budget, budgetProps] = defineField("budget");
 
 const submit = handleSubmit(async (values) => {
   console.log(values);
-  const rawResponse = await fetch(`${config.public.appServer}/gigs`, {
-    method: "POST",
-    ...authHeaders(),
-    credentials: "include",
-    body: JSON.stringify({
-      ...values,
-      type: "das",
-      preferredTechnologies: generateRandomTechnologies(),
-      active: true,
-    }),
-  });
+  const rawResponse = await fetch(
+    `${config.public.appServer}/gigs/${props.gigId}`,
+    {
+      method: "POST",
+      ...authHeaders(),
+      credentials: "include",
+      body: JSON.stringify({
+        ...values,
+        gigId: props.gigId,
+        userId: props.userId,
+      }),
+    }
+  );
 
   const content = await rawResponse.json();
 
@@ -65,36 +84,8 @@ const submit = handleSubmit(async (values) => {
 
 const disableButton = computed(
   () =>
-    [title.value, description.value, budget.value].some(
+    [deadline.value, description.value, budget.value].some(
       (v) => v === undefined
     ) || Object.keys(errors.value).length !== 0
 );
-
-function generateRandomTechnologies() {
-  const sampleTechnologies = [
-    "JavaScript",
-    "React",
-    "Node.js",
-    "HTML",
-    "CSS",
-    "Python",
-    "Vue.js",
-    "Angular",
-    "Java",
-    "Swift",
-    "Ruby",
-    "PHP",
-    "Express.js",
-    "Django",
-    "Spring",
-    "Laravel",
-    "Bootstrap",
-  ];
-  const randomTechnologies = [];
-  for (let i = 0; i < 5; i++) {
-    const randomIndex = Math.floor(Math.random() * sampleTechnologies.length);
-    randomTechnologies.push(sampleTechnologies[randomIndex]);
-  }
-  return randomTechnologies;
-}
 </script>

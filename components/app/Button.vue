@@ -14,6 +14,7 @@
   >
     <Loader2 v-if="loading" class="h-full mr-2 animate-spin" />
     <template v-else>
+      <img v-if="img" class="h-full" :src="img" alt="" />
       <Icon v-if="prependIcon" :name="prependIcon" />
       <Icon v-if="icon" :name="icon" />
       <span v-else class="font-semibold mb-0.5"> {{ text }}</span>
@@ -26,6 +27,7 @@ import { Loader2 } from "lucide-vue-next";
 export interface ButtonComponentType {
   text?: string;
   disabled?: boolean;
+  img?: string;
   outline?: boolean;
   rounded?: boolean;
   loading?: boolean;

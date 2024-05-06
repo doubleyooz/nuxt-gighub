@@ -9,9 +9,10 @@
         <users-chips-rating text="4.8" />
       </template>
       <template #content>
-        <img
-          class="w-36 h-36 border-4 border-white transition-all duration-400 ease-in-out rounded-full absolute top-32 left-0 right-0 mx-auto"
-          src="https://randomuser.me/api/portraits/men/2.jpg"
+        <app-user-avatar
+          class="absolute top-32 left-0 right-0 mx-auto"
+          rounded
+          show-border
         />
 
         <span class="mt-8 text-3xl font-bold">{{
@@ -20,6 +21,12 @@
       </template>
     </app-card>
     <users-description :text="userStore.loadedUser.description" />
+    <pre>{{ userStore.loadedUser }}</pre>
+    <users-settings-wallet
+      :address="userStore.loadedUser.wallet"
+      @update:wallet="authStore.handleMetaSignIn()"
+      @remove:wallet="userStore.setWallet(null)"
+    />
   </div>
 </template>
 
@@ -33,6 +40,7 @@ const router = useRouter();
 
 const config = useRuntimeConfig();
 const userStore = useUserStore();
+const authStore = useAuthStore();
 
 const loading = ref(false);
 const { setAccessToken, refreshAccessToken } = useAccessToken(

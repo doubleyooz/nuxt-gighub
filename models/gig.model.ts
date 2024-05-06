@@ -6,4 +6,5 @@ export interface Gig {
   preferredTechnologies: string[];
   type: string;
   userId?: string;
+  _id: string;
 }

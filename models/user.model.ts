@@ -3,4 +3,6 @@ export interface User {
   name: string;
   picture: string;
   _id: string;
+  description: string;
+  wallet: string | null;
 }

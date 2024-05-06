@@ -1,10 +1,12 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import type { Gig } from "~/models/gig.model";
+import type { Proposition } from "~/models/proposition.model";
 import type { User } from "~/models/user.model";
 
 export interface LoadedGig extends Gig {
   user: User;
+  propositions: Proposition[];
 }
 
 export const useGigStore = defineStore("gig", () => {
@@ -25,33 +27,35 @@ export const useGigStore = defineStore("gig", () => {
 
     loading.value = true;
     try {
-      const result = await fetch(
+      const gigResult = await fetch(
         `${config.public.appServer}/gigs?title=${title}`,
         authHeaders()
       );
 
-      if (!result.ok) {
+      if (!gigResult.ok) {
         setAccessToken(null);
-        throw new Error(`HTTP error! status: ${result.status}`);
+        throw new Error(`HTTP error! status: ${gigResult.status}`);
       }
-      const rawResponse = await result.json();
-      loadedGig.value = rawResponse.data[0];
+      const gigResponse = await gigResult.json();
+      console.log(gigResponse);
+      loadedGig.value = gigResponse.data[0];
 
-      setSafeAccessToken(rawResponse.metadata?.accessToken);
+      setSafeAccessToken(gigResponse.metadata?.accessToken);
 
-      const userResult = await fetch(
-        `${config.public.appServer}/users/${rawResponse.data[0].userId}`,
+      const propositionsResult = await fetch(
+        `${config.public.appServer}/propositions?gigId=${loadedGig.value?._id}`,
         authHeaders()
       );
-      if (!userResult.ok) {
+      if (!propositionsResult.ok) {
         setAccessToken(null);
-        throw new Error(`HTTP error! status: ${userResult.status}`);
+        throw new Error(`HTTP error! status: ${propositionsResult.status}`);
       }
-      const rawResponse2 = await userResult.json();
-      console.log({ rawResponse2, loadedGig: loadedGig.value });
-      if (loadedGig.value) loadedGig.value.user = rawResponse2.data;
+      const propositionsResponse = await propositionsResult.json();
+      console.log({ propositionsResponse, loadedGig: loadedGig.value });
+      if (loadedGig.value)
+        loadedGig.value.propositions = propositionsResponse.data;
 
-      setSafeAccessToken(rawResponse.metadata?.accessToken);
+      setSafeAccessToken(gigResponse.metadata?.accessToken);
     } catch (err) {
       console.log(err);
 
@@ -88,9 +92,9 @@ export const useGigStore = defineStore("gig", () => {
     return data || [];
   }
 
-  const isOwner = computed(
-    () => loadedGig.value?.userId === authStore.loggedUser?._id
-  );
+  const isOwner = computed(() => {
+    return loadedGig.value?.user._id === authStore.loggedUser?._id;
+  });
 
   return { loadGig, loadedGig, isOwner, fetchGigs };
 });

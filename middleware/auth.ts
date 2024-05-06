@@ -1,5 +1,7 @@
 export default defineNuxtRouteMiddleware(async (to, _from) => {
   const config = useRuntimeConfig();
+  const { logout } = useAuthStore();
+  const { unloadUser } = useUserStore();
   const { refreshAccessToken, setAccessToken } = useAccessToken(
     config.public.appServer
   );
@@ -9,7 +11,8 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
     try {
       await refreshAccessToken();
     } catch (err) {
-      setAccessToken(null);
+      logout();
+      unloadUser();
     }
 
     if (to.fullPath === "/login" || to.fullPath === "/") {

@@ -1,8 +1,10 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
+import type { User } from "~/models/user.model";
 
+export interface LoadedUser extends User {}
 export const useUserStore = defineStore("user", () => {
-  const loadedUser = ref();
+  const loadedUser = ref<LoadedUser>();
   const config = useRuntimeConfig();
 
   const { authHeaders, setAccessToken } = useAccessToken(
@@ -35,5 +37,29 @@ export const useUserStore = defineStore("user", () => {
     console.log({ result: loadedUser.value });
   }
 
-  return { loadUser, loadedUser };
+  async function setWallet(address: string | null) {
+    if (!loadedUser.value) return;
+    const response = await fetch(`${config.public.appServer}/users`, {
+      headers: { ...authHeaders().headers },
+      method: "PUT",
+
+      body: JSON.stringify({
+        wallet: address,
+      }),
+      credentials: "include",
+    });
+
+    // Check if the request was successful
+    if (!response.ok) {
+      throw new Error("Message token failed");
+    }
+
+    loadedUser.value.wallet = address;
+  }
+
+  async function unloadUser() {
+    loadedUser.value = undefined;
+  }
+
+  return { loadUser, unloadUser, setWallet, loadedUser };
 });

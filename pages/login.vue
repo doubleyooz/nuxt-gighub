@@ -22,13 +22,24 @@
             v-bind="passwordProps"
           />
         </div>
-        <app-button
-          class="w-full"
-          text="Login"
-          :loading="authStore.loading"
-          :disabled="disableButton"
-          @click="submit"
-        />
+        <div class="flex flex-col gap-3">
+          <app-button
+            class="w-full"
+            text="Login"
+            :loading="authStore.loading"
+            :disabled="disableButton"
+            @click="submit"
+          />
+          <app-button
+            block
+            class="card-btn metamask d-flex"
+            :loading="authStore.loading"
+            variant="secondary"
+            text="Login with Metamask "
+            img="/images/metamask.png"
+            @click="authStore.handleMetaSignIn"
+          />
+        </div>
       </template>
     </app-card>
   </div>
@@ -42,6 +53,7 @@ definePageMeta({
   layout: "auth",
 });
 const { emailRules, passwordRules } = useFormRules();
+
 const authStore = useAuthStore();
 
 interface LoginForm {

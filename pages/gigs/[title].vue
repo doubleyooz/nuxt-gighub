@@ -22,7 +22,20 @@
     </div>
     <div class="col-span-1 border-l-2 pl-2">
       <app-button v-if="gigStore.isOwner" variant="blue" :text="'Edit'" />
-      <app-button v-else variant="blue" :text="'Place a bid'" />
+      <gigs-cards-create-proposition
+        v-else-if="authStore.loggedUser"
+        :gig-id="gigStore.loadedGig._id"
+        :user-id="authStore.loggedUser._id"
+      />
+      <div>
+        <gigs-cards-proposition
+          v-for="(item, index) in gigStore.loadedGig.propositions"
+          :key="index"
+          :offer="item.budget"
+          :deadline="item.deadline"
+          :username="item.user?.name || 'username'"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -32,6 +45,7 @@ definePageMeta({
   layout: "default",
 });
 const gigStore = useGigStore();
+const authStore = useAuthStore();
 
 const route = useRoute();
 onBeforeMount(async () => {
