@@ -19,7 +19,8 @@ export const useGigStore = defineStore("gig", () => {
     authHeaders,
     setSafeAccessToken,
     setAccessToken,
-    refreshAccessToken,
+
+    fetchApi,
   } = useAccessToken(config.public.appServer);
 
   async function loadGig(title: string) {
@@ -27,35 +28,17 @@ export const useGigStore = defineStore("gig", () => {
 
     loading.value = true;
     try {
-      const gigResult = await fetch(
-        `${config.public.appServer}/gigs?title=${title}`,
-        authHeaders()
+      const gigResult = await fetchApi(`gigs?title=${title}`);
+
+      loadedGig.value = gigResult.data[0];
+
+      const propositionsResponse = await fetchApi(
+        `propositions?gigId=${loadedGig.value?._id}`
       );
 
-      if (!gigResult.ok) {
-        setAccessToken(null);
-        throw new Error(`HTTP error! status: ${gigResult.status}`);
-      }
-      const gigResponse = await gigResult.json();
-      console.log(gigResponse);
-      loadedGig.value = gigResponse.data[0];
-
-      setSafeAccessToken(gigResponse.metadata?.accessToken);
-
-      const propositionsResult = await fetch(
-        `${config.public.appServer}/propositions?gigId=${loadedGig.value?._id}`,
-        authHeaders()
-      );
-      if (!propositionsResult.ok) {
-        setAccessToken(null);
-        throw new Error(`HTTP error! status: ${propositionsResult.status}`);
-      }
-      const propositionsResponse = await propositionsResult.json();
       console.log({ propositionsResponse, loadedGig: loadedGig.value });
       if (loadedGig.value)
         loadedGig.value.propositions = propositionsResponse.data;
-
-      setSafeAccessToken(gigResponse.metadata?.accessToken);
     } catch (err) {
       console.log(err);
 
@@ -71,22 +54,15 @@ export const useGigStore = defineStore("gig", () => {
   async function fetchGigs() {
     let data;
     try {
-      const result = await fetch(
-        `${config.public.appServer}/gigs`,
-        authHeaders()
-      );
+      const result = await fetchApi(`gigs`);
 
-      if (!result.ok) {
-        throw new Error(`HTTP error! status: ${result.status}`);
-      }
-      const rawResponse = await result.json();
-
-      setSafeAccessToken(rawResponse.metadata?.accessToken);
-      console.log(rawResponse);
-      data = rawResponse.data;
+      console.log(result);
+      data = result.data;
     } catch (err) {
       console.log(err);
-      await refreshAccessToken();
+
+      const token = useCookie("token");
+      token.value = null;
     }
     console.log({ data });
     return data || [];

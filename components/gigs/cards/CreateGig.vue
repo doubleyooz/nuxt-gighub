@@ -35,7 +35,10 @@
 </template>
 
 <script setup lang="ts">
+import { ethers } from "ethers";
 import { useForm } from "vee-validate";
+import Freelancing from "@/build/contracts/Freelancing.json";
+
 import type { Gig } from "~/models/gig.model";
 const config = useRuntimeConfig();
 
@@ -52,6 +55,29 @@ const [budget, budgetProps] = defineField("budget");
 
 const submit = handleSubmit(async (values) => {
   console.log(values);
+
+  const provider = new ethers.JsonRpcProvider("http://localhost:7545");
+
+  const wallet = new ethers.Wallet(
+    "0x41941de78686e0fad0c6606627c4b363899fb637632a41c4628362815b8acc6d",
+    provider
+  );
+  const contractABI = Freelancing.abi;
+  const contractBinary = Freelancing.bytecode;
+  const contractFactory = new ethers.ContractFactory(
+    contractABI,
+    contractBinary,
+    wallet
+  );
+  console.log({ contractFactory });
+  const unlockTime = Math.floor(Date.now() / 1000) + 600;
+  const budgetInWei = ethers.parseEther(budget.value.toString());
+
+  const contract = await contractFactory.deploy(unlockTime, {
+    value: budgetInWei,
+  });
+  console.log({ contract });
+
   const rawResponse = await fetch(`${config.public.appServer}/gigs`, {
     method: "POST",
     ...authHeaders(),

@@ -1,4 +1,6 @@
 export const useAccessToken = (baseUrl: string) => {
+  const router = useRouter();
+  const route = useRoute();
   const authHeaders = () => {
     return {
       headers: {
@@ -17,7 +19,7 @@ export const useAccessToken = (baseUrl: string) => {
     useCookie("token").value = token;
   };
 
-  const refreshAccessToken = async () => {
+  const refreshAccessToken = async (redirect = true) => {
     const response = await fetch(`${baseUrl}/refresh-token`, {
       headers: {
         "Content-Type": "application/json",
@@ -27,31 +29,49 @@ export const useAccessToken = (baseUrl: string) => {
 
     // Check if the request was successful
     if (!response.ok) {
+      setAccessToken(null);
+      if (redirect) {
+        const redirectPath =
+          (route.query.redirect as string) || useCookie("redirect").value;
+        if (redirectPath) {
+          router.push(redirectPath);
+          useCookie("redirect").value = null;
+        } else {
+          router.push("/");
+        }
+      }
+
       throw new Error("Refresh token failed");
     }
 
     // If successful, you can process the response here
     const data = await response.json();
+    setAccessToken(data);
     console.log({ refresh: data });
   };
 
-  const verifyAccessToken = async () => {
+  const fetchApi = async (path: string) => {
     try {
-      const response = await fetch(`${baseUrl}/me`, {
-        headers: authHeaders().headers,
-      });
+      const apiResponse = await fetch(`${baseUrl}/${path}`, authHeaders());
 
       // Check if the request was successful
-      if (!response.ok) {
-        throw new Error("Verify token failed");
+      if (!apiResponse.ok) {
+        throw new Error("Fetch data failed");
       }
-
-      // If successful, you can process the response here
-      const data = await response.json();
-      console.log({ refresh: data });
+      const response = await apiResponse.json();
+      setSafeAccessToken(response.metadata?.accessToken);
+      return { data: response.data };
     } catch (err) {
-      console.log({ err });
       await refreshAccessToken();
+      const apiResponse = await fetch(`${baseUrl}/${path}`, authHeaders());
+
+      // Check if the request was successful
+      if (!apiResponse.ok) {
+        throw new Error("Fetch data failed");
+      }
+      const response = await apiResponse.json();
+      setSafeAccessToken(response.metadata?.accessToken);
+      return { data: response.data };
     }
   };
 
@@ -60,6 +80,6 @@ export const useAccessToken = (baseUrl: string) => {
     setAccessToken,
     setSafeAccessToken,
     refreshAccessToken,
-    verifyAccessToken,
+    fetchApi,
   };
 };

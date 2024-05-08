@@ -1,13 +1,12 @@
 export default defineNuxtRouteMiddleware(async (to, _from) => {
   const config = useRuntimeConfig();
-  const { verifyAccessToken, setAccessToken } = useAccessToken(
+  const { refreshAccessToken, setAccessToken } = useAccessToken(
     config.public.appServer
   );
 
   try {
-    await verifyAccessToken();
-
-    return navigateTo("/");
+    console.log("control-access");
+    await refreshAccessToken(false);
   } catch {
     setAccessToken(null);
   }
