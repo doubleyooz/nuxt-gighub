@@ -52,14 +52,17 @@ const { controlledValues, handleSubmit, defineField, errors } = useForm<Gig>({
 const [title, titleProps] = defineField("title");
 const [description, descriptionProps] = defineField("description");
 const [budget, budgetProps] = defineField("budget");
-
+const usdToEth = (usdAmount: number) => {
+  const ethExchangeRate = 3000;
+  return usdAmount / ethExchangeRate;
+};
 const submit = handleSubmit(async (values) => {
   console.log(values);
 
   const provider = new ethers.JsonRpcProvider("http://localhost:7545");
 
   const wallet = new ethers.Wallet(
-    "0x41941de78686e0fad0c6606627c4b363899fb637632a41c4628362815b8acc6d",
+    "0x2ce0e6e5c20af3db102ce997de705422a93b46a453aae891d9d03c8a216649c9",
     provider
   );
   const contractABI = Freelancing.abi;
@@ -71,7 +74,7 @@ const submit = handleSubmit(async (values) => {
   );
   console.log({ contractFactory });
   const unlockTime = Math.floor(Date.now() / 1000) + 600;
-  const budgetInWei = ethers.parseEther(budget.value.toString());
+  const budgetInWei = ethers.parseEther(usdToEth(budget.value).toString());
 
   const contract = await contractFactory.deploy(unlockTime, {
     value: budgetInWei,
@@ -85,6 +88,7 @@ const submit = handleSubmit(async (values) => {
     body: JSON.stringify({
       ...values,
       type: "das",
+      contractAddress: contract.target,
       preferredTechnologies: generateRandomTechnologies(),
       active: true,
     }),

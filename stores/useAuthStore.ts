@@ -15,13 +15,11 @@ export const useAuthStore = defineStore("auth", () => {
 
   const loading = ref(false);
   const accessToken = useCookie("token");
-
-  const loggedUser = ref<User>();
-
-  onBeforeMount(() => {
-    const storedUser = localStorage.getItem("loggedUser");
-    if (storedUser) loggedUser.value = JSON.parse(storedUser);
-  });
+  const storedUser: Ref<User | null> = useCookie("loggedUser");
+  console.log(storedUser.value);
+  const loggedUser = ref<User | null>(
+    storedUser.value ? storedUser.value : null
+  );
 
   const setAccessToken = (str: string | null) => {
     accessToken.value = str;
@@ -116,6 +114,8 @@ export const useAuthStore = defineStore("auth", () => {
         return;
       }
 
+      console.log(user);
+
       if (accessToken) setAccessToken(accessToken);
       if (user) loggedUser.value = { ...loggedUser.value, ...user };
 
@@ -135,13 +135,14 @@ export const useAuthStore = defineStore("auth", () => {
 
   const logout = async () => {
     accessToken.value = undefined;
-    loggedUser.value = undefined;
+    loggedUser.value = null;
   };
 
   watch(
     loggedUser,
     () => {
-      localStorage.setItem("loggedUser", JSON.stringify(loggedUser.value));
+      console.log(loggedUser.value);
+      storedUser.value = JSON.stringify(loggedUser.value);
     },
     { deep: true }
   );

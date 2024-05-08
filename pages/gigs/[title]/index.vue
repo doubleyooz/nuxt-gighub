@@ -20,20 +20,27 @@
       }}</span>
       <div>Created by {{ gigStore.loadedGig.user?.name }}</div>
     </div>
+
     <div class="col-span-1 border-l-2 pl-2">
       <app-button v-if="gigStore.isOwner" variant="blue" :text="'Edit'" />
       <gigs-cards-create-proposition
-        v-else-if="authStore.loggedUser"
+        v-else-if="authStore.loggedUser && !propositionAlreadySent"
         :gig-id="gigStore.loadedGig._id"
         :user-id="authStore.loggedUser._id"
       />
+
       <div>
         <gigs-cards-proposition
           v-for="(item, index) in gigStore.loadedGig.propositions"
           :key="index"
           :offer="item.budget"
-          :deadline="item.deadline"
+          :days="item.deadline"
+          :description="item.description"
+          :rejected="item.rejected"
           :username="item.user?.name || 'username'"
+          @click:proposition="
+            $router.push(`/gigs/${gigStore.loadedGig?.title}/propositions`)
+          "
         />
       </div>
     </div>
@@ -53,4 +60,10 @@ onBeforeMount(async () => {
     gigStore.loadGig(route.params?.title as string)
   );
 });
+
+const propositionAlreadySent = computed(() =>
+  (gigStore.loadedGig?.propositions || []).some(
+    (item) => item.user?._id === authStore.loggedUser?._id
+  )
+);
 </script>

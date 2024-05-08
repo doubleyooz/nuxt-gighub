@@ -15,22 +15,16 @@ export const useGigStore = defineStore("gig", () => {
   const config = useRuntimeConfig();
   const authStore = useAuthStore();
 
-  const {
-    authHeaders,
-    setSafeAccessToken,
-    setAccessToken,
-
-    fetchApi,
-  } = useAccessToken(config.public.appServer);
+  const { fetchApi } = useAccessToken(config.public.appServer);
 
   async function loadGig(title: string) {
     if (loadedGig.value?.title === title) return;
 
     loading.value = true;
     try {
-      const gigResult = await fetchApi(`gigs?title=${title}`);
+      const gigResponse = await fetchApi(`gigs?title=${title}`);
 
-      loadedGig.value = gigResult.data[0];
+      loadedGig.value = gigResponse.data[0];
 
       const propositionsResponse = await fetchApi(
         `propositions?gigId=${loadedGig.value?._id}`
@@ -68,9 +62,27 @@ export const useGigStore = defineStore("gig", () => {
     return data || [];
   }
 
+  async function rejectProposition(propositionId: string) {
+    try {
+      const propositionResponse = await fetchApi(
+        `propositions/${propositionId}`,
+        { method: "PUT", body: { rejected: true } }
+      );
+      if (!loadedGig.value) return;
+
+      const propositionIndex = loadedGig.value.propositions.findIndex(
+        (item) => item._id === propositionId
+      );
+      loadedGig.value.propositions[propositionIndex].rejected =
+        propositionResponse.data.rejected;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   const isOwner = computed(() => {
     return loadedGig.value?.user._id === authStore.loggedUser?._id;
   });
 
-  return { loadGig, loadedGig, isOwner, fetchGigs };
+  return { loadGig, loadedGig, isOwner, fetchGigs, rejectProposition };
 });

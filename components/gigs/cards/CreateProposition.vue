@@ -71,8 +71,8 @@ const submit = handleSubmit(async (values) => {
       credentials: "include",
       body: JSON.stringify({
         ...values,
-        gigId: props.gigId,
-        userId: props.userId,
+        gig: props.gigId,
+        user: props.userId,
       }),
     }
   );

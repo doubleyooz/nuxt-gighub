@@ -1,6 +1,7 @@
 export const useAccessToken = (baseUrl: string) => {
   const router = useRouter();
   const route = useRoute();
+  type httpMethod = "GET" | "POST" | "DELETE" | "PUT";
   const authHeaders = () => {
     return {
       headers: {
@@ -50,9 +51,18 @@ export const useAccessToken = (baseUrl: string) => {
     console.log({ refresh: data });
   };
 
-  const fetchApi = async (path: string) => {
+  const fetchApi = async (
+    path: string,
+    options: { method: httpMethod; body?: object } = {
+      method: "GET",
+    }
+  ) => {
     try {
-      const apiResponse = await fetch(`${baseUrl}/${path}`, authHeaders());
+      const apiResponse = await fetch(`${baseUrl}/${path}`, {
+        method: options.method,
+        body: JSON.stringify(options.body),
+        headers: authHeaders().headers,
+      });
 
       // Check if the request was successful
       if (!apiResponse.ok) {
