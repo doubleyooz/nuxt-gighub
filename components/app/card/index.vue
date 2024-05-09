@@ -20,6 +20,9 @@
     <div class="flex flex-col">
       <slot name="content" />
     </div>
+    <div v-if="!noFooter" class="flex flex-col">
+      <slot name="footer" />
+    </div>
   </div>
 </template>
 
@@ -31,6 +34,7 @@ type CardVariant = "blank" | "solid";
 export interface CardComponentType extends HeaderCardComponentType {
   outline?: boolean;
   rounded?: boolean;
+  noFooter?: boolean;
   variant?: CardVariant;
 }
 

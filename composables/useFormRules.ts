@@ -31,15 +31,15 @@ export const useFormRules = () => {
   };
 
   const nameRules = { name: yup.string().min(3).max(25).trim() };
-
+  const descriptionRules = { description: yup.string().min(6).max(500).trim() };
   const gigSchema = {
     title: yup.string().min(3).max(25).trim(),
-    description: yup.string().min(6).max(300).trim(),
+    ...descriptionRules,
     budget: yup.number().min(10),
   };
 
   const propositionSchema = {
-    description: yup.string().min(6).max(300).trim(),
+    ...descriptionRules,
     budget: yup.number().min(10),
     deadline: yup.number().min(1),
   };
@@ -49,6 +49,7 @@ export const useFormRules = () => {
     passwordRules,
     nameRules,
     gigSchema,
+    descriptionRules,
     propositionSchema,
   };
 };

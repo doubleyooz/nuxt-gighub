@@ -11,15 +11,36 @@
     </div>
 
     <input
+      v-if="type === 'text'"
       v-model="value"
       :name="name"
-      class="overflow-hidden overflow-ellipsis px-3 py-2 outline outline-2 font-normal text-base rounded-lg placeholder:text-gray-300 placeholder:text-base"
+      class="overflow-hidden overflow-ellipsis px-3 py-2 font-normal text-base rounded-lg placeholder:text-gray-300 placeholder:text-base"
       :class="[
+        outline ? 'outline outline-2' : '',
         errorMessage
           ? 'outline-error-600 color-error-600'
           : 'outline-gray-400 focus:outline-gray-700',
       ]"
       type="text"
+      :placeholder="placeholder ?? name"
+      :disabled="disabled"
+      :required="required"
+      v-bind="$attrs"
+      @change="emit('is:valid', !errorMessage)"
+    />
+    <textarea
+      v-else
+      v-model="value"
+      :name="name"
+      class="overflow-hidden overflow-ellipsis px-3 py-2 font-normal text-base rounded-lg placeholder:text-gray-300 placeholder:text-base"
+      :class="[
+        outline ? 'outline outline-2' : '',
+        errorMessage
+          ? 'outline-error-600 color-error-600'
+          : 'outline-gray-400 focus:outline-gray-700',
+      ]"
+      cols="30"
+      rows="10"
       :placeholder="placeholder ?? name"
       :disabled="disabled"
       :required="required"
@@ -36,12 +57,16 @@
 import type { YupSchema } from "vee-validate";
 import { useField } from "vee-validate";
 
-interface TextFieldProps {
+export type TextFieldType = "text" | "textarea";
+
+export interface TextFieldProps {
   modelValue?: string | number | boolean | unknown[] | any;
   name: string;
   placeholder?: string;
   label?: string;
   required?: boolean;
+  outline?: boolean;
+  type?: TextFieldType;
   size?: Size;
   disabled?: boolean;
   schema?: YupSchema;
@@ -54,6 +79,7 @@ const props = withDefaults(defineProps<TextFieldProps>(), {
   label: undefined,
   modelValue: undefined,
   schema: undefined,
+  type: "text",
   size: "medium",
   extraClasses: undefined,
   placeholder: undefined,

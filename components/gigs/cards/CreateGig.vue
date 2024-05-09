@@ -60,10 +60,9 @@ const submit = handleSubmit(async (values) => {
 
   const provider = new ethers.JsonRpcProvider("http://localhost:7545");
 
-  const wallet = new ethers.Wallet(
-    "0x43a84e7b9e94de9152aa2f01f4bdbf2de8d14d157e26e33b483289f0f64d9faa",
-    provider
-  );
+  const browserProvider = new ethers.BrowserProvider(window.ethereum);
+  const wallet = await withTimeout(12000, browserProvider.getSigner());
+
   const contractABI = Freelancing.abi;
   const contractBinary = Freelancing.bytecode;
   const contractFactory = new ethers.ContractFactory(
@@ -71,7 +70,6 @@ const submit = handleSubmit(async (values) => {
     contractBinary,
     wallet
   );
-  console.log({ contractFactory });
   const unlockTime = Math.floor(Date.now() / 1000) + 600;
   const budgetInWei = ethers.parseEther(usdToEth(budget.value).toString());
 

@@ -4,10 +4,17 @@ import type { User } from "~/models/user.model";
 
 export interface LoadedUser extends User {}
 export const useUserStore = defineStore("user", () => {
-  const loadedUser = ref<LoadedUser>();
   const config = useRuntimeConfig();
 
   const { fetchApi } = useAccessToken(config.public.appServer);
+
+  const loadedUser = ref<LoadedUser>();
+
+  const storedUser: Ref<User | null> = useCookie("loggedUser");
+
+  const loggedUser = ref<User | null>(
+    storedUser.value ? storedUser.value : null
+  );
 
   async function loadUser(username: string) {
     console.log({
@@ -36,10 +43,13 @@ export const useUserStore = defineStore("user", () => {
 
     loadedUser.value.wallet = response.data.address;
   }
+  const isLoggedUser = computed(
+    () => loggedUser.value?.name === loadedUser.value?.name
+  );
 
   async function unloadUser() {
     loadedUser.value = undefined;
   }
 
-  return { loadUser, unloadUser, setWallet, loadedUser };
+  return { loadUser, isLoggedUser, unloadUser, setWallet, loadedUser };
 });

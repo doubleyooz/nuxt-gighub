@@ -1,26 +1,21 @@
 <template>
-  <app-card title="Wallet" no-footer>
-    <template #content>
-      <div class="item d-flex w-100 justify-space-between">
-        <div class="d-flex align-center gap-4">
-          <div class="label d-flex align-center">
-            <img src="/images/metamask.png" alt="" />
-            <span>Metamask</span>
-          </div>
-        </div>
+  <div
+    class="flex flex-col gap-6 w-full justify-between p-6 border border-slate-100 rounded-lg"
+  >
+    <div class="flex w-full items-center justify-between">
+      <span>Metamask</span>
 
-        <app-button
-          class="small ml-2"
-          size="large"
-          :variant="buttonVariant"
-          :loading="isLoading"
-          img="/images/metamask.png"
-          :text="address ? 'Unlink wallet' : 'Link wallet'"
-          @click="handleClick"
-        />
-      </div>
-    </template>
-  </app-card>
+      <app-button
+        class="small ml-2"
+        size="large"
+        :variant="buttonVariant"
+        :loading="isLoading"
+        img="/images/metamask.png"
+        :text="address ? 'Unlink wallet' : 'Link wallet'"
+        @click="handleClick"
+      />
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
