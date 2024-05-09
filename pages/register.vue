@@ -48,6 +48,7 @@
 import { useForm } from "vee-validate";
 
 definePageMeta({
+  middleware: "control-access",
   layout: "auth",
 });
 const router = useRouter();

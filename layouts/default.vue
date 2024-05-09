@@ -1,6 +1,16 @@
 <template>
   <div class="flex flex-col h-screen">
-    <app-navbar :username="username" />
+    <app-navbar class="px-6" :username="username">
+      <template #left>
+        <img
+          class="cursor-pointer"
+          src="/logo.png"
+          height="60"
+          width="60"
+          alt="gighub"
+          @click="router.push('/')"
+        /> </template
+    ></app-navbar>
     <main class="h-full">
       <slot />
     </main>
@@ -8,6 +18,8 @@
 </template>
 
 <script setup lang="ts">
+const router = useRouter();
+
 const authStore = useAuthStore();
 const userStore = useUserStore();
 const { loadedUser } = storeToRefs(userStore);

@@ -7,9 +7,7 @@ export const useUserStore = defineStore("user", () => {
   const loadedUser = ref<LoadedUser>();
   const config = useRuntimeConfig();
 
-  const { authHeaders, setAccessToken } = useAccessToken(
-    config.public.appServer
-  );
+  const { fetchApi } = useAccessToken(config.public.appServer);
 
   async function loadUser(username: string) {
     console.log({
@@ -19,42 +17,24 @@ export const useUserStore = defineStore("user", () => {
     });
     if (loadedUser.value?.name === username) return;
 
-    const result = await fetch(
-      `${config.public.appServer}/users?name=${username}`,
-      authHeaders()
-    );
+    const result = await fetchApi(`users?name=${username}`);
 
-    if (!result.ok) {
-      console.log("here");
-      setAccessToken(null);
-      throw new Error(`HTTP error! status: ${result.status}`);
-    }
-
-    loadedUser.value = (await result.json()).data[0];
-
-    console.log({ result: loadedUser.value });
+    loadedUser.value = result.data[0];
 
     console.log({ result: loadedUser.value });
   }
 
   async function setWallet(address: string | null) {
     if (!loadedUser.value) return;
-    const response = await fetch(`${config.public.appServer}/users`, {
-      headers: { ...authHeaders().headers },
+    const response = await fetchApi(`users`, {
       method: "PUT",
 
-      body: JSON.stringify({
+      body: {
         wallet: address,
-      }),
-      credentials: "include",
+      },
     });
 
-    // Check if the request was successful
-    if (!response.ok) {
-      throw new Error("Message token failed");
-    }
-
-    loadedUser.value.wallet = address;
+    loadedUser.value.wallet = response.data.address;
   }
 
   async function unloadUser() {

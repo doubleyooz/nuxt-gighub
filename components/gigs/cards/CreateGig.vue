@@ -40,10 +40,9 @@ import { useForm } from "vee-validate";
 import Freelancing from "@/build/contracts/Freelancing.json";
 
 import type { Gig } from "~/models/gig.model";
-const config = useRuntimeConfig();
 
-const { authHeaders } = useAccessToken(config.public.appServer);
 const { gigSchema } = useFormRules();
+const { createGig } = useGigStore();
 
 const { controlledValues, handleSubmit, defineField, errors } = useForm<Gig>({
   validationSchema: gigSchema,
@@ -62,7 +61,7 @@ const submit = handleSubmit(async (values) => {
   const provider = new ethers.JsonRpcProvider("http://localhost:7545");
 
   const wallet = new ethers.Wallet(
-    "0x2ce0e6e5c20af3db102ce997de705422a93b46a453aae891d9d03c8a216649c9",
+    "0x43a84e7b9e94de9152aa2f01f4bdbf2de8d14d157e26e33b483289f0f64d9faa",
     provider
   );
   const contractABI = Freelancing.abi;
@@ -79,24 +78,13 @@ const submit = handleSubmit(async (values) => {
   const contract = await contractFactory.deploy(unlockTime, {
     value: budgetInWei,
   });
-  console.log({ contract });
-
-  const rawResponse = await fetch(`${config.public.appServer}/gigs`, {
-    method: "POST",
-    ...authHeaders(),
-    credentials: "include",
-    body: JSON.stringify({
-      ...values,
-      type: "das",
-      contractAddress: contract.target,
-      preferredTechnologies: generateRandomTechnologies(),
-      active: true,
-    }),
+  console.log({ contractAddress: contract.target });
+  await createGig({
+    ...values,
+    type: "das",
+    contractAddress: contract.target as string,
+    preferredTechnologies: generateRandomTechnologies(),
   });
-
-  const content = await rawResponse.json();
-
-  console.log(content);
 });
 
 const disableButton = computed(

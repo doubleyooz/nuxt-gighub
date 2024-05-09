@@ -11,6 +11,7 @@ export interface LoadedGig extends Gig {
 
 export const useGigStore = defineStore("gig", () => {
   const loadedGig = ref<LoadedGig>();
+  const loadedGigs = ref<LoadedGig[]>([]);
   const loading = ref(true);
   const config = useRuntimeConfig();
   const authStore = useAuthStore();
@@ -45,12 +46,23 @@ export const useGigStore = defineStore("gig", () => {
     console.log({ loadedGig: loadedGig.value });
   }
 
+  async function createGig(gig: Gig) {
+    const rawResponse = await fetchApi(`gigs`, {
+      method: "POST",
+      body: {
+        ...gig,
+      },
+    });
+
+    loadedGigs.value.push(rawResponse.data);
+    return rawResponse.data;
+  }
+
   async function fetchGigs() {
     let data;
     try {
       const result = await fetchApi(`gigs`);
 
-      console.log(result);
       data = result.data;
     } catch (err) {
       console.log(err);
@@ -58,8 +70,9 @@ export const useGigStore = defineStore("gig", () => {
       const token = useCookie("token");
       token.value = null;
     }
-    console.log({ data });
-    return data || [];
+
+    loadedGigs.value = data;
+    return loadedGigs.value;
   }
 
   async function rejectProposition(propositionId: string) {
@@ -84,5 +97,13 @@ export const useGigStore = defineStore("gig", () => {
     return loadedGig.value?.user._id === authStore.loggedUser?._id;
   });
 
-  return { loadGig, loadedGig, isOwner, fetchGigs, rejectProposition };
+  return {
+    loadGig,
+    loadedGig,
+    loadedGigs,
+    isOwner,
+    createGig,
+    fetchGigs,
+    rejectProposition,
+  };
 });

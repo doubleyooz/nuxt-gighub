@@ -48,6 +48,7 @@ const { loadedGig, loadGig, isOwner, rejectProposition } = useGigStore();
 const gigIndex = ref(parseInt(route.params.index as string) || 0);
 
 onBeforeMount(async () => {
+  console.log(loadedGig);
   if (!loadedGig) {
     await loadGig(route.params.title as string);
   }

@@ -1,6 +1,7 @@
 export interface Gig {
   title: string;
   description: string;
+  contractAddress: string;
   createdAt: Date;
   budget: number;
   preferredTechnologies: string[];

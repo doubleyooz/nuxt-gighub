@@ -4,10 +4,16 @@
   >
     <div>
       <div class="flex text-2xl justify-between gap-2">
-        <span class="font-semibold cursor-pointer" @click="emit('open')">{{
-          title
-        }}</span>
-        <button>dsd</button>
+        <span
+          class="font-semibold cursor-pointer"
+          @click="emit('click:title')"
+          >{{ title }}</span
+        >
+        <app-button
+          :icon="filledHeart ? 'mdi:heart' : 'mdi:heart-outline'"
+          variant="text"
+          @click="emit('click:heart')"
+        />
       </div>
       <span v-if="createdAt" class="text-xs text-gray-500">{{
         createdAt.getMinutes()
@@ -34,9 +40,11 @@
 <script setup lang="ts">
 import type { Gig } from "~/models/gig.model";
 
-export interface GigCardComponentType extends Gig {}
+export interface GigCardComponentType extends Gig {
+  filledHeart?: boolean;
+}
 
-const emit = defineEmits(["open"]);
+const emit = defineEmits(["click:title", "click:heart"]);
 
 withDefaults(defineProps<GigCardComponentType>(), {});
 </script>

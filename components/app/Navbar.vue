@@ -1,5 +1,8 @@
 <template>
-  <div class="flex w-100 bg-gradient-to-r from-primary-400 to-primary-600">
+  <div
+    class="flex w-100 justify-between items-center bg-gradient-to-r from-primary-400 to-primary-600 px-2"
+  >
+    <slot name="left" />
     <span>{{ username }}</span>
   </div>
 </template>

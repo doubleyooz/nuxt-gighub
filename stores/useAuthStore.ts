@@ -5,7 +5,9 @@ import type { User } from "~/models/user.model";
 export const useAuthStore = defineStore("auth", () => {
   const config = useRuntimeConfig();
 
-  const { authHeaders } = useAccessToken(config.public.appServer);
+  const { fetchApi, setSafeAccessToken, setAccessToken } = useAccessToken(
+    config.public.appServer
+  );
   const route = useRoute();
   const router = useRouter();
   const redirect =
@@ -14,16 +16,11 @@ export const useAuthStore = defineStore("auth", () => {
   const { linkWallet } = useMetamask(config.public.appServer);
 
   const loading = ref(false);
-  const accessToken = useCookie("token");
   const storedUser: Ref<User | null> = useCookie("loggedUser");
-  console.log(storedUser.value);
+
   const loggedUser = ref<User | null>(
     storedUser.value ? storedUser.value : null
   );
-
-  const setAccessToken = (str: string | null) => {
-    accessToken.value = str;
-  };
 
   const handleSignIn = async (email: string, password: string) => {
     loading.value = true;
@@ -55,7 +52,7 @@ export const useAuthStore = defineStore("auth", () => {
       // If successful, you can process the response here
       const { data, metadata } = await response.json();
       console.log({ auth: data, metadata });
-      setAccessToken(metadata?.accessToken);
+      setSafeAccessToken(metadata?.accessToken);
       loggedUser.value = data;
       // Redirect the user or perform other actions as needed
       if (redirect) {
@@ -82,16 +79,10 @@ export const useAuthStore = defineStore("auth", () => {
     try {
       // Make the request to the login endpoint
 
-      const rawResponse = await fetch(`${config.public.appServer}/users`, {
+      await fetchApi(`users`, {
         method: "POST",
-        ...authHeaders(),
-        body: JSON.stringify(data),
+        body: { ...data },
       });
-
-      // Check if the request was successful
-      if (!rawResponse.ok) {
-        throw new Error("Sign Up failed");
-      }
 
       router.push("/login");
     } catch (error) {
@@ -134,8 +125,10 @@ export const useAuthStore = defineStore("auth", () => {
   };
 
   const logout = async () => {
-    accessToken.value = undefined;
+    setAccessToken(null);
     loggedUser.value = null;
+
+    console.log("logout");
   };
 
   watch(
@@ -148,8 +141,6 @@ export const useAuthStore = defineStore("auth", () => {
   );
 
   return {
-    setAccessToken,
-    accessToken,
     handleSignIn,
     handleSignUp,
     handleMetaSignIn,

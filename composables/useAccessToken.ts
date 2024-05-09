@@ -20,7 +20,7 @@ export const useAccessToken = (baseUrl: string) => {
     useCookie("token").value = token;
   };
 
-  const refreshAccessToken = async (redirect = true) => {
+  const refreshAccessToken = async () => {
     const response = await fetch(`${baseUrl}/refresh-token`, {
       headers: {
         "Content-Type": "application/json",
@@ -31,15 +31,14 @@ export const useAccessToken = (baseUrl: string) => {
     // Check if the request was successful
     if (!response.ok) {
       setAccessToken(null);
-      if (redirect) {
-        const redirectPath =
-          (route.query.redirect as string) || useCookie("redirect").value;
-        if (redirectPath) {
-          router.push(redirectPath);
-          useCookie("redirect").value = null;
-        } else {
-          router.push("/");
-        }
+
+      const redirectPath =
+        (route.query.redirect as string) || useCookie("redirect").value;
+      if (redirectPath) {
+        router.push(redirectPath);
+        useCookie("redirect").value = null;
+      } else {
+        router.push("/");
       }
 
       throw new Error("Refresh token failed");
@@ -47,7 +46,7 @@ export const useAccessToken = (baseUrl: string) => {
 
     // If successful, you can process the response here
     const data = await response.json();
-    setAccessToken(data);
+    setSafeAccessToken(data.metadata?.accessToken);
     console.log({ refresh: data });
   };
 
