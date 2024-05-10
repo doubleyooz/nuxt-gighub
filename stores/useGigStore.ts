@@ -1,7 +1,10 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import type { Gig } from "~/models/gig.model";
-import type { Proposition } from "~/models/proposition.model";
+import type {
+  PROPOSITION_STATUS,
+  Proposition,
+} from "~/models/proposition.model";
 import type { User } from "~/models/user.model";
 
 export interface LoadedGig extends Gig {
@@ -75,19 +78,22 @@ export const useGigStore = defineStore("gig", () => {
     return loadedGigs.value;
   }
 
-  async function rejectProposition(propositionId: string) {
+  async function updatePropositionStatus(
+    propositionId: string,
+    status: PROPOSITION_STATUS
+  ) {
     try {
       const propositionResponse = await fetchApi(
         `propositions/${propositionId}`,
-        { method: "PUT", body: { rejected: true } }
+        { method: "PUT", body: { status } }
       );
       if (!loadedGig.value) return;
 
       const propositionIndex = loadedGig.value.propositions.findIndex(
         (item) => item._id === propositionId
       );
-      loadedGig.value.propositions[propositionIndex].rejected =
-        propositionResponse.data.rejected;
+      loadedGig.value.propositions[propositionIndex].status =
+        propositionResponse.data.status;
     } catch (err) {
       console.log(err);
     }
@@ -104,6 +110,6 @@ export const useGigStore = defineStore("gig", () => {
     isOwner,
     createGig,
     fetchGigs,
-    rejectProposition,
+    updatePropositionStatus,
   };
 });

@@ -36,8 +36,9 @@
           :offer="item.budget"
           :days="item.deadline"
           :description="item.description"
-          :rejected="item.rejected"
+          :status="item.status"
           :username="item.user?.name || 'username'"
+          no-edit
           @click:proposition="
             $router.push(`/gigs/${gigStore.loadedGig?.title}/propositions`)
           "

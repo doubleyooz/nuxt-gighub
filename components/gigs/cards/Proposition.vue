@@ -1,26 +1,44 @@
 <template>
   <div class="flex flex-col bg-slate-100 rounded-lg px-3 py-2">
     <div
-      class="flex gap-3 py-2"
+      class="flex gap-3 py-2 w-full justify-between"
       :class="[expanded ? 'items-top' : 'items-center']"
       @click="emit('click:proposition')"
     >
-      <app-user-avatar
-        class=""
-        :class="[expanded ? 'w-16 h-16' : 'w-10 h-10']"
+      <div class="flex gap-3">
+        <app-user-avatar
+          class=""
+          :class="[expanded ? 'w-16 h-16' : 'w-10 h-10']"
+          rounded
+        />
+        <div class="flex flex-col h-100 justify-between">
+          <span class="font-bold text-xl">{{ username }}</span>
+          <span v-if="title" class="font-medium text-sm">{{ title }}</span>
+          <span v-else class="font-medium text-sm">Freelancer</span>
+        </div>
+      </div>
+      <app-chip
+        v-if="statusChip"
+        :variant="statusChip"
+        icon="mdi:circle"
         rounded
       />
-      <div class="flex flex-col h-100 justify-between">
-        <span class="font-bold text-xl">{{ username }}</span>
-        <span class="font-medium text-sm">Freelancer</span>
-      </div>
     </div>
 
     <app-divider />
     <div class="flex w-full justify-between">
       <div class="flex flex-col">
         <span class="text-xs text-gray-600 font-medium">Offer</span>
-        <span class="text-sm font-semibold">{{ offer }}$</span>
+        <users-description
+          type="number"
+          :no-edit="noEdit"
+          :value="offer"
+          name="offer"
+          append-text="$"
+          :schema="budgetRules.budget"
+          value-styling="text-sm font-semibold"
+          items-center
+        />
       </div>
       <div v-if="expanded" class="flex flex-col">
         <span class="text-xs text-gray-600 font-medium"
@@ -43,14 +61,34 @@ export interface PropositionCardComponentType {
   username: string;
   offer: number;
   description: string;
+  title: string | null;
   days: number;
   expanded?: boolean;
   status?: number;
+  noEdit?: boolean;
 }
 
 const emit = defineEmits(["click:proposition"]);
 
-withDefaults(defineProps<PropositionCardComponentType>(), {
+const props = withDefaults(defineProps<PropositionCardComponentType>(), {
   status: 0,
+  title: null,
+});
+
+const { budgetRules } = useFormRules();
+
+const statusChip = computed<Variant | null>(() => {
+  switch (props.status) {
+    case 0:
+      return null;
+    case 1:
+      return "error";
+    case 2:
+      return "warning";
+    case 3:
+      return "success";
+    default:
+      return null;
+  }
 });
 </script>

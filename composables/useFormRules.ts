@@ -32,21 +32,23 @@ export const useFormRules = () => {
 
   const nameRules = { name: yup.string().min(3).max(25).trim() };
   const descriptionRules = { description: yup.string().min(6).max(500).trim() };
+  const budgetRules = { budget: yup.number().min(10) };
+
   const gigSchema = {
     title: yup.string().min(3).max(25).trim(),
     ...descriptionRules,
-    budget: yup.number().min(10),
   };
 
   const propositionSchema = {
     ...descriptionRules,
-    budget: yup.number().min(10),
+    ...budgetRules,
     deadline: yup.number().min(1),
   };
 
   return {
     emailRules,
     passwordRules,
+    budgetRules,
     nameRules,
     gigSchema,
     descriptionRules,

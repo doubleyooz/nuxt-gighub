@@ -9,9 +9,8 @@
         {{ label }}
       </p>
     </div>
-
     <input
-      v-if="type === 'text'"
+      v-if="variant"
       v-model="value"
       :name="name"
       class="overflow-hidden overflow-ellipsis px-3 py-2 font-normal text-base rounded-lg placeholder:text-gray-300 placeholder:text-base"
@@ -21,7 +20,7 @@
           ? 'outline-error-600 color-error-600'
           : 'outline-gray-400 focus:outline-gray-700',
       ]"
-      type="text"
+      :type="type"
       :placeholder="placeholder ?? name"
       :disabled="disabled"
       :required="required"
@@ -57,7 +56,7 @@
 import type { YupSchema } from "vee-validate";
 import { useField } from "vee-validate";
 
-export type TextFieldType = "text" | "textarea";
+export type TextFieldType = "text" | "textarea" | "number" | "password";
 
 export interface TextFieldProps {
   modelValue?: string | number | boolean | unknown[] | any;
@@ -86,6 +85,10 @@ const props = withDefaults(defineProps<TextFieldProps>(), {
 });
 
 const emit = defineEmits(["is:valid"]);
+
+const variant = computed(() =>
+  ["text", "number", "password"].includes(props.type)
+);
 
 const sizeHeightPadding = () => {
   let height;

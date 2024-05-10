@@ -28,7 +28,7 @@ const earnFunds = async () => {
   const provider = new ethers.JsonRpcProvider("http://localhost:7545");
 
   const wallet = new ethers.Wallet(
-    "0xb7638f0a6691d2ba576b21abd7441516d7d811ff06dec7ded53bf231bb6a4688",
+    "0xa71b57e098d7d778d640fed71a7781080bb1aebf04f52544942186c4fc587e0c",
     provider
   );
   const contractABI = Giveaway.abi;

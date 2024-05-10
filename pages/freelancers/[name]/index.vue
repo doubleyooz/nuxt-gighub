@@ -32,6 +32,7 @@
         :text="userStore.loadedUser.title"
         :no-edit="!userStore.isLoggedUser"
         :empty-text="'No title added'"
+        name="title"
         items-center
       />
       <users-description
@@ -62,6 +63,8 @@ const router = useRouter();
 const config = useRuntimeConfig();
 const userStore = useUserStore();
 const authStore = useAuthStore();
+
+const {} = useFormRules();
 
 const loading = ref(false);
 const { setAccessToken, refreshAccessToken } = useAccessToken(

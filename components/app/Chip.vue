@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex rounded-xl gap-1 items-center"
+    class="flex gap-1 items-center"
     :class="[
       sizeHeightPadding(),
       clickable
@@ -50,27 +50,32 @@ const props = withDefaults(defineProps<ChipComponentType>(), {
 });
 
 const sizeHeightPadding = () => {
-  let padding = props.rounded ? "p-2" : "px-3";
-  let height;
+  let padding = props.icon ? "p-2" : props.rounded ? "py-2 px-4" : "px-4";
+  let height, width;
   switch (props.size) {
     case "x-small":
       height = "h-6";
+      width = "w-6";
       break;
     case "small":
       height = "h-7";
+      width = "w-7";
       break;
     case "medium":
       height = "h-8";
+      width = "w-8";
       break;
     case "large":
       height = "h-9";
+      width = "w-9";
       padding = props.rounded ? "p-2" : "px-4";
       break;
     default:
       height = "h-8";
+      width = "w-8";
       break;
   }
-  return `${height} ${padding}`;
+  return props.icon ? `${height} ${width} ${padding}` : `${height} ${padding}`;
 };
 
 const isHidden = ref(false);
