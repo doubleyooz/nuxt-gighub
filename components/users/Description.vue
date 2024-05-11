@@ -3,47 +3,54 @@
     class="flex w-full gap-3"
     :class="[
       justifyBetween ? 'justify-between' : '',
-      itemsCenter ? 'items-center' : 'items-start',
+      itemsCenter && !edit ? 'items-center' : 'items-start',
     ]"
   >
     <div
       v-if="edit && !noEdit"
       class="w-full"
-      :class="[
-        valueStyling,
-        type === 'textarea' ? 'h-full' : '',
-        bold ? 'font-bold' : '',
-      ]"
+      :class="[type === 'textarea' ? 'h-full' : '', bold ? 'font-bold' : '']"
     >
       <app-inputs-text-field
         v-model="thisValue"
         :name="name"
         :type="type"
         :placeholder="name"
-        :schema="schema"
         v-bind="valueProps"
+        :value-styling="valueStyling"
       />
     </div>
     <div
       v-else
+      class="text-ellipsis overflow-hidden text-nowrap"
       :class="[
         valueStyling,
         type === 'textarea' ? 'h-full' : '',
         bold ? 'font-bold' : '',
       ]"
     >
-      <span v-if="value">{{ finalText }}</span>
+      <span v-if="finalText">{{ finalText }}</span>
       <span v-else class="text-slate-400">{{ emptyText }}</span>
     </div>
-    <app-button
-      v-if="!noEdit"
-      icon="mdi:pen"
-      variant="primary"
-      pressed
-      rounded
-      outline
-      @click="edit = !edit"
-    />
+    <div v-if="!noEdit" class="flex flex-wrap gap-2 min-w-fit">
+      <app-button
+        :icon="edit ? 'mdi:check' : 'mdi:pen'"
+        :variant="edit ? 'success' : 'primary'"
+        pressed
+        rounded
+        outline
+        @click="toggleEdit"
+      />
+      <app-button
+        v-if="edit"
+        icon="mdi:close"
+        variant="error"
+        pressed
+        rounded
+        outline
+        @click="toggleEdit"
+      />
+    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -91,6 +98,10 @@ const [thisValue, valueProps] = defineField(props.name);
 const finalText = computed(() =>
   props.prependText.concat(thisValue.value?.toString(), props.appendText)
 );
+
+const toggleEdit = () => {
+  edit.value = !edit.value;
+};
 
 watch(thisValue, () => {
   console.log(thisValue.value);

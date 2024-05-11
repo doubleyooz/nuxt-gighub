@@ -5,14 +5,14 @@ pragma solidity ^0.8.19;
 // import "hardhat/console.sol";
 
 contract Giveaway {
-    address payable public owner;
+    address payable public scapegoat;
     uint public amount;
 
     event Withdrawal(uint _amount, uint when);
 
     constructor() payable {
         amount = msg.value;
-        owner = payable(msg.sender);
+        scapegoat = payable(msg.sender);
     }
 
     function withdraw(address payable _freelancer) public {

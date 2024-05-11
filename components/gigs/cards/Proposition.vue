@@ -57,6 +57,8 @@
 </template>
 
 <script setup lang="ts">
+import type { PROPOSITION_STATUS } from "~/models/proposition.model";
+
 export interface PropositionCardComponentType {
   username: string;
   offer: number;
@@ -64,7 +66,7 @@ export interface PropositionCardComponentType {
   title: string | null;
   days: number;
   expanded?: boolean;
-  status?: number;
+  status?: PROPOSITION_STATUS;
   noEdit?: boolean;
 }
 
@@ -84,9 +86,14 @@ const statusChip = computed<Variant | null>(() => {
     case 1:
       return "error";
     case 2:
-      return "warning";
     case 3:
+    case 4:
+      return "warning";
+    case 5:
+    case 6:
       return "success";
+    case 7:
+      return "secondary";
     default:
       return null;
   }

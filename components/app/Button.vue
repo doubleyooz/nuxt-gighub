@@ -59,25 +59,25 @@ const sizeHeightPadding = () => {
   switch (props.size) {
     case "x-small":
       height = "h-6 text-xs";
-      width = "w-6";
+      width = "min-w-6";
       break;
     case "small":
       height = "h-7 text-xs";
-      width = "w-7";
+      width = "min-w-7";
 
       break;
     case "medium":
       height = "h-9 text-sm";
-      width = "w-9";
+      width = "min-w-9";
       break;
     case "large":
       height = "h-10 text-base";
-      width = "w-10";
+      width = "min-w-10";
       padding = props.rounded ? "p-2" : "px-4";
       break;
     default:
       height = "h-9 text-sm";
-      width = "w-9";
+      width = "min-w-9";
       break;
   }
 

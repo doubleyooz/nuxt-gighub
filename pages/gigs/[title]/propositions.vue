@@ -79,9 +79,17 @@ const statusText = computed(() => {
     case 1:
       return "Your proposition was rejected, so sad";
     case 2:
-      return "You've been selected, now you need to confirm the deal";
+      return "We're still waiting for an answer";
     case 3:
+      return "You've been selected, now you need to confirm the deal";
+    case 4:
+      return "You've been selected, you accepted it now we're waiting for a final approval on the hirer's part";
+    case 5:
       return "It's time to get your hands dirty";
+    case 6:
+      return "It's been fulfilled, how did you like it?";
+    case 7:
+      return "It's been cancelled, so sad";
     default:
       return "We're still waiting for an answer";
   }

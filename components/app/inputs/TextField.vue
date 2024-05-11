@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-col" :class="extraClasses">
-    <div v-if="label" class="flex mb-2 text-blue">
+  <div class="flex flex-col">
+    <label v-if="label" class="flex mb-2 text-blue">
       <p v-if="required" class="mr-1 text-xs text-error-600">*</p>
       <p
         class="text-sm font-semibold"
@@ -8,115 +8,77 @@
       >
         {{ label }}
       </p>
-    </div>
-    <input
-      v-if="variant"
-      v-model="value"
-      :name="name"
-      class="overflow-hidden overflow-ellipsis px-3 py-2 font-normal text-base rounded-lg placeholder:text-gray-300 placeholder:text-base"
-      :class="[
-        outline ? 'outline outline-2' : '',
-        errorMessage
-          ? 'outline-error-600 color-error-600'
-          : 'outline-gray-400 focus:outline-gray-700',
-      ]"
-      :type="type"
-      :placeholder="placeholder ?? name"
-      :disabled="disabled"
-      :required="required"
-      v-bind="$attrs"
-      @change="emit('is:valid', !errorMessage)"
-    />
-    <textarea
-      v-else
-      v-model="value"
-      :name="name"
-      class="overflow-hidden overflow-ellipsis px-3 py-2 font-normal text-base rounded-lg placeholder:text-gray-300 placeholder:text-base"
-      :class="[
-        outline ? 'outline outline-2' : '',
-        errorMessage
-          ? 'outline-error-600 color-error-600'
-          : 'outline-gray-400 focus:outline-gray-700',
-      ]"
-      cols="30"
-      rows="10"
-      :placeholder="placeholder ?? name"
-      :disabled="disabled"
-      :required="required"
-      v-bind="$attrs"
-      @change="emit('is:valid', !errorMessage)"
-    />
+    </label>
 
-    <span v-if="!noErrors" class="mt-1 text-error-500 h-3 text-[10px]">{{
-      errorMessage
-    }}</span>
+    <component
+      :is="variant ? 'input' : 'textarea'"
+      :id="name"
+      v-model="modelValue"
+      :name="name"
+      class="overflow-hidden overflow-ellipsis font-normal rounded-lg placeholder:text-gray-300 placeholder:text-base"
+      :class="[valueStyling, inputClasses]"
+      :type="type"
+      :value="modelValue"
+      :placeholder="placeholder ?? name"
+      :disabled="disabled"
+      :required="required"
+      v-bind="$attrs"
+      :aria-describedby="errorMessage ? `${name}-error` : null"
+      @input="updateValue"
+    />
+    <span
+      v-if="!noErrors"
+      :id="`${name}-error`"
+      class="mt-1 text-error-500 h-3 text-[10px]"
+      >{{ errorMessage }}</span
+    >
   </div>
 </template>
 <script setup lang="ts">
-import type { YupSchema } from "vee-validate";
-import { useField } from "vee-validate";
-
 export type TextFieldType = "text" | "textarea" | "number" | "password";
 
 export interface TextFieldProps {
-  modelValue?: string | number | boolean | unknown[] | any;
   name: string;
   placeholder?: string;
   label?: string;
   required?: boolean;
+  modelValue: string | number;
   outline?: boolean;
+  errorMessage?: string;
   type?: TextFieldType;
-  size?: Size;
   disabled?: boolean;
-  schema?: YupSchema;
   noErrors?: boolean;
-  extraClasses?: string;
+  valueStyling?: string;
+  noPadding?: boolean;
 }
 
 const props = withDefaults(defineProps<TextFieldProps>(), {
-  // info: undefined,
   label: undefined,
-  modelValue: undefined,
   schema: undefined,
+  errorMessage: undefined,
   type: "text",
-  size: "medium",
-  extraClasses: undefined,
+  valueStyling: undefined,
   placeholder: undefined,
 });
 
-const emit = defineEmits(["is:valid"]);
+const emit = defineEmits(["update:modelValue"]);
+
+const { modelValue } = toRefs(props);
 
 const variant = computed(() =>
   ["text", "number", "password"].includes(props.type)
 );
 
-const sizeHeightPadding = () => {
-  let height;
-  switch (props.size) {
-    case "x-small":
-      height = "max-h-7";
-      break;
-    case "small":
-      height = "max-h-8";
-      break;
-    case "medium":
-      height = "max-h-9";
-      break;
-    case "large":
-      height = "max-h-10";
-      break;
-    default:
-      height = "max-h-9";
-      break;
-  }
-  return height;
+const inputClasses = computed(() => [
+  "overflow-hidden overflow-ellipsis font-normal rounded-lg placeholder:text-gray-300 placeholder:text-base",
+  props.outline ? "outline outline-2" : "",
+  props.errorMessage
+    ? "outline-error-600 color-error-600"
+    : "outline-gray-400 focus:outline-gray-700",
+  props.noPadding ? "p-0" : "px-3 py-2",
+]);
+
+const updateValue = (event) => {
+  emit("update:modelValue", event.target.value);
 };
-
-const { value, errorMessage } = useField(() => props.name, props.schema, {
-  syncVModel: true,
-});
-
-watch(errorMessage, (prev) => {
-  emit("is:valid", !prev);
-});
 </script>

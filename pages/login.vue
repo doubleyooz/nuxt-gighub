@@ -12,6 +12,7 @@
             v-model="email"
             label="Email"
             name="email"
+            :error-message="errors.email"
             v-bind="emailProps"
           />
           <app-inputs-text-field
@@ -19,6 +20,7 @@
             label="Password"
             name="password"
             type="password"
+            :error-message="errors.password"
             v-bind="passwordProps"
           />
         </div>

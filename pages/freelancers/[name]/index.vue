@@ -33,12 +33,14 @@
         :no-edit="!userStore.isLoggedUser"
         :empty-text="'No title added'"
         name="title"
+        value-styling="leading-7 text-2xl tracking-wide"
         items-center
       />
       <users-description
         :text="userStore.loadedUser.description"
         :no-edit="!userStore.isLoggedUser"
         type="textarea"
+        name="description"
         justify-between
         empty-text="No description was added"
       />

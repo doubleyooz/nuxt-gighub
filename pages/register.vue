@@ -16,12 +16,14 @@
             v-model="name"
             label="Name"
             name="name"
+            :error-message="errors.name"
             v-bind="nameProps"
           />
           <app-inputs-text-field
             v-model="email"
             label="Email"
             name="email"
+            :error-message="errors.email"
             v-bind="emailProps"
           />
           <app-inputs-text-field
@@ -29,6 +31,7 @@
             label="Password"
             name="password"
             type="password"
+            :error-message="errors.password"
             v-bind="passwordProps"
           />
         </form>
