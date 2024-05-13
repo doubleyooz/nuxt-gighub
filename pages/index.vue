@@ -12,7 +12,7 @@
         :budget="item.budget"
         :created-at="item.createdAt"
         :contract-address="item.contractAddress"
-        :preferred-technologies="item.preferredTechnologies"
+        :skills="item.skills"
         :type="item.type"
         :_id="item._id"
         @click:title="navigateTo(`/gigs/${item.title}`)"
@@ -36,6 +36,8 @@ onBeforeMount(async () => {
 });
 
 const filteredGigs = computed(() =>
-  loadedGigs.value.filter((gig) => gig.user?._id !== authStore.loggedUser?._id)
+  (loadedGigs.value || []).filter(
+    (gig) => gig.user?._id !== authStore.loggedUser?._id
+  )
 );
 </script>

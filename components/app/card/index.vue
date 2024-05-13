@@ -1,23 +1,23 @@
 <template>
   <div
-    class="px-3 pb-3"
+    class="flex flex-col w-full px-3 pb-3"
     :class="[
       rounded ? 'rounded-lg' : '',
-      outline ? '' : 'border-0',
+      outline ? 'border border-slate-200 rounded-lg' : 'border-0',
       variantClass,
     ]"
   >
     <app-card-header
+      v-if="!noHeader"
       :title="title"
       :description="description"
       :img="img"
       :title-slot="titleSlot"
-      :no-edit="noEdit"
       @click:edit="emit('click:edit')"
     >
       <template #title> <slot name="title" /> </template
     ></app-card-header>
-    <div class="flex flex-col">
+    <div class="flex w-full justify-between p-6">
       <slot name="content" />
     </div>
     <div v-if="!noFooter" class="flex flex-col">
@@ -36,6 +36,7 @@ export interface CardComponentType extends HeaderCardComponentType {
   rounded?: boolean;
   noFooter?: boolean;
   variant?: CardVariant;
+  noHeader?: boolean;
 }
 
 const props = withDefaults(defineProps<CardComponentType>(), {

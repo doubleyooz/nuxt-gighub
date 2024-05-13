@@ -19,27 +19,33 @@ export const useContracts = () => {
   const networkUrl = "http://localhost:7545";
 
   const createGigContract = async (budget: number) => {
-    const provider = new ethers.JsonRpcProvider(networkUrl);
+    loading.value = true;
 
-    const browserProvider = new ethers.BrowserProvider(window.ethereum);
-    const wallet = await withTimeout(12000, browserProvider.getSigner());
+    try {
+      const browserProvider = new ethers.BrowserProvider(window.ethereum);
+      const wallet = await withTimeout(12000, browserProvider.getSigner());
 
-    const contractABI = Freelancing.abi;
-    const contractBinary = Freelancing.bytecode;
-    const contractFactory = new ethers.ContractFactory(
-      contractABI,
-      contractBinary,
-      wallet
-    );
-    const unlockTime = Math.floor(Date.now() / 1000) + 600;
-    const budgetInWei = ethers.parseEther(usdToEth(budget).toString());
+      const contractABI = Freelancing.abi;
+      const contractBinary = Freelancing.bytecode;
+      const contractFactory = new ethers.ContractFactory(
+        contractABI,
+        contractBinary,
+        wallet
+      );
+      const unlockTime = Math.floor(Date.now() / 1000) + 600;
+      const budgetInWei = ethers.parseEther(usdToEth(budget).toString());
 
-    const contract = await contractFactory.deploy(unlockTime, {
-      value: budgetInWei,
-    });
-    console.log({ contractAddress: contract.target });
-    if (!contract) throw new Error("failed to create contract");
-    return contract;
+      const contract = await contractFactory.deploy(unlockTime, {
+        value: budgetInWei,
+      });
+      console.log({ contractAddress: contract.target });
+      if (!contract) throw new Error("failed to create contract");
+
+      loading.value = false;
+      return contract;
+    } catch (err) {}
+
+    loading.value = false;
   };
 
   const earnFunds = async () => {

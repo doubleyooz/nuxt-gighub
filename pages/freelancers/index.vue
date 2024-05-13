@@ -13,7 +13,7 @@
           item.picture.ext
         )
       "
-      @click="router.push(`freelancers/${item.name}`)"
+      @click="router.push(`/freelancers/${item.name}`)"
     />
   </div>
 </template>

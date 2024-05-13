@@ -3,10 +3,7 @@
     <div>
       <img v-if="img" :src="img.src" :height="img.height" :width="img.width" />
     </div>
-    <div
-      class="flex w-full items-center pt-2"
-      :class="noEdit ? 'justify-center' : 'justify-between'"
-    >
+    <div class="flex w-full justify-center items-center pt-2">
       <slot v-if="titleSlot" name="title" />
       <div v-else class="flex items-end w-full gap-3 flex-wrap overflow-hidden">
         <span
@@ -20,13 +17,6 @@
           >{{ description }}</span
         >
       </div>
-      <app-button
-        v-if="!noEdit"
-        prepend-icon="mdi:edit"
-        :variant="'text'"
-        text="Edit"
-        @click="emit('click:edit')"
-      />
     </div>
   </div>
 </template>
@@ -34,7 +24,7 @@
 <script setup lang="ts">
 export interface HeaderCardComponentType {
   title?: string;
-  noEdit?: boolean;
+
   description?: string;
   titleSlot?: boolean;
   img?: imgProps;
@@ -52,6 +42,4 @@ const props = withDefaults(defineProps<HeaderCardComponentType>(), {
   description: undefined,
   img: undefined,
 });
-
-const emit = defineEmits(["click:edit"]);
 </script>

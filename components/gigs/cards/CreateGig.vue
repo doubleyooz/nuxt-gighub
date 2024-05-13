@@ -1,5 +1,5 @@
 <template>
-  <app-card title="new Gig">
+  <app-card title="new Gig" outline>
     <template #content>
       <div class="flex flex-col gap-2 mb-4">
         <app-inputs-text-field
@@ -27,6 +27,7 @@
       <app-button
         class="w-full"
         text="Create new Gig"
+        :loading="loading"
         :disabled="disableButton"
         @click="submit"
       />
@@ -40,7 +41,7 @@ import type { Gig } from "~/models/gig.model";
 
 const { gigSchema } = useFormRules();
 const { createGig } = useGigStore();
-const { createGigContract } = useContracts();
+const { createGigContract, loading } = useContracts();
 
 const { controlledValues, handleSubmit, defineField, errors } = useForm<Gig>({
   validationSchema: gigSchema,
@@ -55,12 +56,13 @@ const submit = handleSubmit(async (values) => {
 
   try {
     const contract = await createGigContract(values.budget);
-    await createGig({
-      ...values,
-      type: "das",
-      contractAddress: contract.target as string,
-      preferredTechnologies: generateRandomTechnologies(),
-    });
+    if (contract)
+      await createGig({
+        ...values,
+        type: "das",
+        contractAddress: contract.target as string,
+        skills: generateRandomTechnologies(),
+      });
   } catch (err) {
     console.log(err);
   }

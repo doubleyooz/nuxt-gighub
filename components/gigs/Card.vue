@@ -27,7 +27,7 @@
     <span class="text-xl text-gray-800 text-ellipsis">{{ description }}</span>
     <div class="flex gap-2 overflow-auto">
       <app-chip
-        v-for="(item, index) in preferredTechnologies"
+        v-for="(item, index) in skills"
         :key="index"
         :text="item"
         variant="grey"

@@ -1,20 +1,14 @@
 <template>
-  <div
-    class="flex flex-col gap-6 w-full justify-between p-6 border border-slate-100 rounded-lg"
-  >
-    <div class="flex w-full items-center justify-between">
-      <span>Metamask</span>
-
-      <app-button
-        class="small ml-2"
-        size="large"
-        :variant="buttonVariant"
-        :loading="isLoading"
-        img="/images/metamask.png"
-        :text="address ? 'Unlink wallet' : 'Link wallet'"
-        @click="handleClick"
-      />
-    </div>
+  <div class="flex w-full items-center justify-center">
+    <app-button
+      class="small ml-2"
+      size="large"
+      :variant="buttonVariant"
+      :loading="isLoading"
+      img="/images/metamask.png"
+      :text="address ? 'Unlink wallet' : 'Link wallet'"
+      @click="handleClick"
+    />
   </div>
 </template>
 
