@@ -1,10 +1,17 @@
 <template>
-  <div class="my-4" :class="[vertical ? 'h-full' : 'w-full', thickness]" />
+  <div
+    :class="[
+      vertical ? 'h-full' : 'w-full',
+      overwriteMargin ? '' : 'my-4',
+      thickness,
+    ]"
+  />
 </template>
 <script setup lang="ts">
 export interface DividerComponentType {
   size?: Size;
   vertical?: boolean;
+  overwriteMargin?: boolean;
 }
 
 const props = withDefaults(defineProps<DividerComponentType>(), {

@@ -1,16 +1,23 @@
 <template>
   <div class="flex flex-col h-screen">
-    <app-navbar class="px-6" :username="username">
+    <app-navbar class="px-6">
       <template #left>
         <img
-          class="cursor-pointer"
+          class="h-14 w-14 cursor-pointer"
           src="/logo.png"
-          height="60"
-          width="60"
           alt="gighub"
           @click="router.push('/')"
-        /> </template
-    ></app-navbar>
+        />
+      </template>
+      <template #right>
+        <app-user-avatar
+          class="w-8 h-8 cursor-pointer"
+          :src="loggedUserPicture"
+          rounded
+          @click:avatar="router.push(`freelancers/${loggedUser?.name}`)"
+        />
+      </template>
+    </app-navbar>
     <main class="h-full">
       <slot />
     </main>
@@ -21,12 +28,5 @@
 const router = useRouter();
 
 const authStore = useAuthStore();
-const userStore = useUserStore();
-const { loadedUser } = storeToRefs(userStore);
-const { loggedUser } = storeToRefs(authStore);
-
-const username = computed<string>(() => {
-  console.log({ loggedUser: loggedUser.value, loadedUser: loadedUser?.value });
-  return loadedUser?.value?.name || loggedUser?.value?.name || "name";
-});
+const { loggedUserPicture, loggedUser } = storeToRefs(authStore);
 </script>

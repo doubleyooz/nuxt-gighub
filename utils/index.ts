@@ -8,3 +8,12 @@ export function withTimeout<T>(ms: number, promise: Promise<T>): Promise<T> {
 
   return Promise.race([promise, timeout]);
 }
+
+export function getImageUrl(
+  serverUrl: string | undefined,
+  _id: string | undefined,
+  ext: string | undefined
+) {
+  if (!(serverUrl && _id && ext)) return undefined;
+  return serverUrl + "/" + _id + "." + ext;
+}

@@ -124,6 +124,14 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
+  const loggedUserPicture = computed(() =>
+    getImageUrl(
+      config.public.imageServer,
+      loggedUser.value?.picture?._id,
+      loggedUser.value?.picture?.ext
+    )
+  );
+
   const logout = async () => {
     setAccessToken(null);
     loggedUser.value = null;
@@ -146,6 +154,7 @@ export const useAuthStore = defineStore("auth", () => {
     handleMetaSignIn,
     loading,
     logout,
+    loggedUserPicture,
     loggedUser,
   };
 });

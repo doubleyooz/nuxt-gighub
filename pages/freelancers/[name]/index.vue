@@ -4,7 +4,12 @@
       class="flex w-full justify-between p-6 border border-slate-100 rounded-lg"
     >
       <div class="flex">
-        <app-user-avatar class="h-20 w-20 mr-4" rounded show-border />
+        <app-user-avatar
+          class="h-20 w-20 mr-4"
+          :src="userStore.userPicture"
+          rounded
+          show-border
+        />
 
         <div class="flex flex-col items-top">
           <span class="text-3xl font-bold">{{

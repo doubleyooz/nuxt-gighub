@@ -31,6 +31,15 @@ export const useUserStore = defineStore("user", () => {
     console.log({ result: loadedUser.value });
   }
 
+  async function loadUsers({ name, email }: { name?: string; email?: string }) {
+    let query = "";
+    if (name) query += `?name=${name}`;
+    else if (email) query += `?email=${email}`;
+    const result: User[] = (await fetchApi(`users${query}`)).data;
+    console.log({ result });
+    return result || [];
+  }
+
   async function setWallet(address: string | null) {
     if (!loadedUser.value) return;
     const response = await fetchApi(`users`, {
@@ -51,5 +60,21 @@ export const useUserStore = defineStore("user", () => {
     loadedUser.value = undefined;
   }
 
-  return { loadUser, isLoggedUser, unloadUser, setWallet, loadedUser };
+  const userPicture = computed(() =>
+    getImageUrl(
+      config.public.imageServer,
+      loadedUser.value?.picture._id,
+      loadedUser.value?.picture.ext
+    )
+  );
+
+  return {
+    loadUser,
+    loadUsers,
+    isLoggedUser,
+    userPicture,
+    unloadUser,
+    setWallet,
+    loadedUser,
+  };
 });

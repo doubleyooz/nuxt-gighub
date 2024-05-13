@@ -9,6 +9,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       appServer: process.env.APP_SERVER || "http://localhost:3001", // Public runtime config
+      imageServer: process.env.IMAGE_SERVER || "http://localhost:3001/public", // Public runtime config
     },
   },
 });

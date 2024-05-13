@@ -3,13 +3,11 @@
     class="flex w-100 justify-between items-center bg-gradient-to-r from-primary-400 to-primary-600 px-2"
   >
     <slot name="left" />
-    <span>{{ username }}</span>
+    <slot name="right" />
   </div>
 </template>
 
 <script setup lang="ts">
-export interface NavBarComponentType {
-  username: string;
-}
+export interface NavBarComponentType {}
 withDefaults(defineProps<NavBarComponentType>(), {});
 </script>
