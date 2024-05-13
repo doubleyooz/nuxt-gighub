@@ -10,6 +10,8 @@
         :description="item.description"
         :budget="item.budget"
         :created-at="item.createdAt"
+        :contract-address="item.contractAddress"
+        :_id="item._id"
         :preferred-technologies="item.preferredTechnologies"
         :type="item.type"
         @click:title="navigateTo(`/gigs/${item.title}`)"

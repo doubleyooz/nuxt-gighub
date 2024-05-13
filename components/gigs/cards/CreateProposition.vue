@@ -38,7 +38,7 @@
 
 <script setup lang="ts">
 import { useForm } from "vee-validate";
-import type { Proposition } from "~/models/proposition.model";
+import type { Proposal } from "~/models/proposal.model";
 
 const config = useRuntimeConfig();
 
@@ -50,11 +50,11 @@ export interface CreatePropositionComponentType {
 const props = withDefaults(defineProps<CreatePropositionComponentType>(), {});
 
 const { authHeaders } = useAccessToken(config.public.appServer);
-const { propositionSchema } = useFormRules();
+const { proposalSchema } = useFormRules();
 
 const { controlledValues, handleSubmit, defineField, errors } =
-  useForm<Proposition>({
-    validationSchema: propositionSchema,
+  useForm<Proposal>({
+    validationSchema: proposalSchema,
   });
 
 const [deadline, deadlineProps] = defineField("deadline");

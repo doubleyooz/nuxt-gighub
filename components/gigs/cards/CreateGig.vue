@@ -35,14 +35,12 @@
 </template>
 
 <script setup lang="ts">
-import { ethers } from "ethers";
 import { useForm } from "vee-validate";
-import Freelancing from "@/build/contracts/Freelancing.json";
-
 import type { Gig } from "~/models/gig.model";
 
 const { gigSchema } = useFormRules();
 const { createGig } = useGigStore();
+const { createGigContract } = useContracts();
 
 const { controlledValues, handleSubmit, defineField, errors } = useForm<Gig>({
   validationSchema: gigSchema,
@@ -51,38 +49,21 @@ const { controlledValues, handleSubmit, defineField, errors } = useForm<Gig>({
 const [title, titleProps] = defineField("title");
 const [description, descriptionProps] = defineField("description");
 const [budget, budgetProps] = defineField("budget");
-const usdToEth = (usdAmount: number) => {
-  const ethExchangeRate = 3000;
-  return usdAmount / ethExchangeRate;
-};
+
 const submit = handleSubmit(async (values) => {
   console.log(values);
 
-  const provider = new ethers.JsonRpcProvider("http://localhost:7545");
-
-  const browserProvider = new ethers.BrowserProvider(window.ethereum);
-  const wallet = await withTimeout(12000, browserProvider.getSigner());
-
-  const contractABI = Freelancing.abi;
-  const contractBinary = Freelancing.bytecode;
-  const contractFactory = new ethers.ContractFactory(
-    contractABI,
-    contractBinary,
-    wallet
-  );
-  const unlockTime = Math.floor(Date.now() / 1000) + 600;
-  const budgetInWei = ethers.parseEther(usdToEth(budget.value).toString());
-
-  const contract = await contractFactory.deploy(unlockTime, {
-    value: budgetInWei,
-  });
-  console.log({ contractAddress: contract.target });
-  await createGig({
-    ...values,
-    type: "das",
-    contractAddress: contract.target as string,
-    preferredTechnologies: generateRandomTechnologies(),
-  });
+  try {
+    const contract = await createGigContract(values.budget);
+    await createGig({
+      ...values,
+      type: "das",
+      contractAddress: contract.target as string,
+      preferredTechnologies: generateRandomTechnologies(),
+    });
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 const disableButton = computed(

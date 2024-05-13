@@ -1,15 +1,10 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import type { Gig } from "~/models/gig.model";
-import type {
-  PROPOSITION_STATUS,
-  Proposition,
-} from "~/models/proposition.model";
-import type { User } from "~/models/user.model";
+import type { PROPOSAL_STATUS, Proposal } from "~/models/proposal.model";
 
 export interface LoadedGig extends Gig {
-  user: User;
-  propositions: Proposition[];
+  propositions: Proposal[];
 }
 
 export const useGigStore = defineStore("gig", () => {
@@ -27,16 +22,16 @@ export const useGigStore = defineStore("gig", () => {
     loading.value = true;
     try {
       const gigResponse = await fetchApi(`gigs?title=${title}`);
-
+      console.log({ loadedGig: loadedGig.value });
       loadedGig.value = gigResponse.data[0];
 
-      const propositionsResponse = await fetchApi(
+      const proposalsResponse = await fetchApi(
         `propositions?gigId=${loadedGig.value?._id}`
       );
 
-      console.log({ propositionsResponse, loadedGig: loadedGig.value });
+      console.log({ proposalsResponse, loadedGig: loadedGig.value });
       if (loadedGig.value)
-        loadedGig.value.propositions = propositionsResponse.data;
+        loadedGig.value.propositions = proposalsResponse.data;
     } catch (err) {
       console.log(err);
 
@@ -61,10 +56,22 @@ export const useGigStore = defineStore("gig", () => {
     return rawResponse.data;
   }
 
-  async function fetchGigs() {
+  async function fetchGigs({
+    user,
+    active,
+  }: {
+    user?: string;
+    active?: boolean;
+  } = {}) {
     let data;
+    let query = "";
+    const activeFilter = typeof active === "boolean";
+    if (user) {
+      query += `?user=${user}`;
+      query += activeFilter ? `&active=${active}` : "";
+    } else if (activeFilter) query += `?active=${active}`;
     try {
-      const result = await fetchApi(`gigs`);
+      const result = await fetchApi(`gigs${query}`);
 
       data = result.data;
     } catch (err) {
@@ -78,15 +85,45 @@ export const useGigStore = defineStore("gig", () => {
     return loadedGigs.value;
   }
 
+  async function fetchProposals({
+    user,
+    status,
+  }: {
+    user?: string;
+    status?: PROPOSAL_STATUS;
+  }) {
+    let data: Proposal[] = [];
+    let query = "";
+    if (user) {
+      query += `?user=${user}`;
+      query += status ? `&status=${status}` : "";
+    } else if (status) query += `?status=${status}`;
+    try {
+      const result = await fetchApi(`propositions${query}`);
+
+      data = result.data;
+    } catch (err) {
+      console.log(err);
+
+      const token = useCookie("token");
+      token.value = null;
+    }
+    console.log(data);
+
+    return data;
+  }
+
   async function updatePropositionStatus(
     propositionId: string,
-    status: PROPOSITION_STATUS
+    status: PROPOSAL_STATUS
   ) {
+    console.log({ propositionId, status });
     try {
       const propositionResponse = await fetchApi(
         `propositions/${propositionId}`,
         { method: "PUT", body: { status } }
       );
+      console.log(propositionResponse);
       if (!loadedGig.value) return;
 
       const propositionIndex = loadedGig.value.propositions.findIndex(
@@ -100,7 +137,7 @@ export const useGigStore = defineStore("gig", () => {
   }
 
   const isOwner = computed(() => {
-    return loadedGig.value?.user._id === authStore.loggedUser?._id;
+    return loadedGig.value?.user?._id === authStore.loggedUser?._id;
   });
 
   return {
@@ -111,5 +148,6 @@ export const useGigStore = defineStore("gig", () => {
     createGig,
     fetchGigs,
     updatePropositionStatus,
+    fetchProposals,
   };
 });

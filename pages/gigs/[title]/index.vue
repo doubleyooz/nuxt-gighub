@@ -30,7 +30,7 @@
       />
 
       <div>
-        <gigs-cards-proposition
+        <gigs-cards-proposal
           v-for="(item, index) in gigStore.loadedGig.propositions"
           :key="index"
           :offer="item.budget"
@@ -39,7 +39,7 @@
           :status="item.status"
           :username="item.user?.name || 'username'"
           no-edit
-          @click:proposition="
+          @click:proposal="
             $router.push(`/gigs/${gigStore.loadedGig?.title}/propositions`)
           "
         />

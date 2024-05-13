@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col h-screen">
-    <app-navbar class="px-6">
+    <app-navbar>
       <template #left>
         <img
           class="h-14 w-14 cursor-pointer"
@@ -14,7 +14,7 @@
           class="w-8 h-8 cursor-pointer"
           :src="loggedUserPicture"
           rounded
-          @click:avatar="router.push(`freelancers/${loggedUser?.name}`)"
+          @click:avatar="router.push(`/freelancers/${loggedUser?.name}`)"
         />
       </template>
     </app-navbar>

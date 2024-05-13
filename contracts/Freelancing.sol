@@ -30,7 +30,7 @@ contract Freelancing {
         // console.log("Unlock time is %o and block timestamp is %o", unlockTime, block.timestamp);
         require(freelancer != address(0), "Freelancer isn't defined.");
 
-        require(msg.sender == freelancer, "You aren't the freelancer");
+        require(msg.sender == owner, "You aren't the owner");
         require(address(this).balance > 0, "No funds to withdraw");
 
         if (block.timestamp >= deadline) {

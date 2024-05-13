@@ -39,7 +39,7 @@ export const useFormRules = () => {
     ...descriptionRules,
   };
 
-  const propositionSchema = {
+  const proposalSchema = {
     ...descriptionRules,
     ...budgetRules,
     deadline: yup.number().min(1),
@@ -52,6 +52,6 @@ export const useFormRules = () => {
     nameRules,
     gigSchema,
     descriptionRules,
-    propositionSchema,
+    proposalSchema,
   };
 };

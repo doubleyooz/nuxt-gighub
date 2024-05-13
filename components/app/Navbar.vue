@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex w-100 justify-between items-center bg-gradient-to-r from-primary-400 to-primary-600 px-2"
+    class="flex w-100 justify-between items-center bg-gradient-to-r from-primary-400 to-primary-600 px-6"
   >
     <slot name="left" />
     <slot name="right" />

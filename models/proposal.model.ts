@@ -9,7 +9,7 @@ type ON_GOING_STATE = 5;
 type FULFILLED_STATE = 6;
 type CANCELLED_STATE = 7;
 
-export type PROPOSITION_STATUS =
+export type PROPOSAL_STATUS =
   | DEFAULT_STATE
   | REJECTED_STATE
   | PENDING_HIRER_APPROVAL_STATE
@@ -19,12 +19,12 @@ export type PROPOSITION_STATUS =
   | FULFILLED_STATE
   | CANCELLED_STATE;
 
-export interface Proposition {
+export interface Proposal {
   description: string;
   _id: string;
   budget: number;
-  status: PROPOSITION_STATUS;
+  status: PROPOSAL_STATUS;
   deadline: number; // number of days as for now
-  user?: User;
+  user: User;
   gigId?: string;
 }
