@@ -52,7 +52,10 @@
         </div>
       </template>
     </app-card>
-    <users-skills :skills="userStore.loadedUser.skills" />
+    <app-skills
+      :skills="userStore.loadedUser.skills"
+      :can-edit="userStore.isLoggedUser"
+    />
     <app-card title="Metamask" outline>
       <template #content>
         <users-settings-wallet

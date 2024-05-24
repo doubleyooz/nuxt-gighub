@@ -9,7 +9,7 @@
           :key="index"
           :text="item"
           variant="grey"
-          closeable
+          :closeable="canEdit"
         />
       </div>
     </template>
@@ -19,6 +19,7 @@
 <script setup lang="ts">
 export interface SkillsComponentType {
   skills?: string[];
+  canEdit: boolean;
 }
 
 const props = withDefaults(defineProps<SkillsComponentType>(), {

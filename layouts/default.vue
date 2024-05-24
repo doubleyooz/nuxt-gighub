@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col h-screen">
-    <app-navbar>
+    <app-navbar no-background>
       <template #left>
         <img
           class="h-14 w-14 cursor-pointer"
@@ -8,6 +8,18 @@
           alt="gighub"
           @click="router.push('/')"
         />
+        <div class="flex justify-start">
+          <app-navbar-item
+            text="Find Work"
+            append-icon
+            @click="router.push('/gigs')"
+          />
+          <app-navbar-item
+            text="My Gigs"
+            append-icon
+            @click="router.push(`/freelancers/${loggedUser?.name}/gigs`)"
+          />
+        </div>
       </template>
       <template #right>
         <app-user-avatar

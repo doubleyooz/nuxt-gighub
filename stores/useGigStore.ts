@@ -80,7 +80,6 @@ export const useGigStore = defineStore("gig", () => {
       const token = useCookie("token");
       token.value = null;
     }
-
     loadedGigs.value = data;
     return loadedGigs.value;
   }

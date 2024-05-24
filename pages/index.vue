@@ -1,24 +1,27 @@
 <template>
   <div class="flex flex-col gap-4 w-full items-center">
-    <div v-if="filteredGigs.length !== 0" class="flex flex-col gap-4 max-w-96">
+    <div class="flex flex-col gap-4 max-w-96">
       <span class="text-xl leading-6 tracking-wide font-semibold"
         >Jobs you might like
       </span>
-      <gigs-card
-        v-for="(item, index) in filteredGigs"
-        :key="index"
-        :title="item.title"
-        :description="item.description"
-        :budget="item.budget"
-        :created-at="item.createdAt"
-        :contract-address="item.contractAddress"
-        :skills="item.skills"
-        :type="item.type"
-        :_id="item._id"
-        @click:title="navigateTo(`/gigs/${item.title}`)"
-      />
+      <div v-if="filteredGigs.length !== 0">
+        <gigs-card
+          v-for="(item, index) in filteredGigs"
+          :key="index"
+          :title="item.title"
+          :description="item.description"
+          :budget="item.budget"
+          :created-at="item.createdAt"
+          :contract-address="item.contractAddress"
+          :skills="item.skills"
+          :type="item.type"
+          :_id="item._id"
+          @click:title="navigateTo(`/gigs/${item.title}`)"
+        />
+      </div>
+
+      <span v-else>Empty list</span>
     </div>
-    <span v-else>Empty list</span>
   </div>
 </template>
 

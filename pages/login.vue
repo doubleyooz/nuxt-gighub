@@ -1,49 +1,55 @@
 <template>
   <div class="grid xs:grid-cols-2 h-full">
     <div class="hidden xs:flex w-full bg-primary-800" />
-    <app-card
-      title="login"
-      :img="{ src: 'logo.png', height: 100, width: 100, alt: 'gighub' }"
-      no-edit
-    >
-      <template #content>
-        <div class="flex flex-col gap-2 mb-4">
-          <app-inputs-text-field
-            v-model="email"
-            label="Email"
-            name="email"
-            :error-message="errors.email"
-            v-bind="emailProps"
-          />
-          <app-inputs-text-field
-            v-model="password"
-            label="Password"
-            name="password"
-            type="password"
-            :error-message="errors.password"
-            v-bind="passwordProps"
-          />
-        </div>
-        <div class="flex flex-col gap-3">
-          <app-button
-            class="w-full"
-            text="Login"
-            :loading="authStore.loading"
-            :disabled="disableButton"
-            @click="submit"
-          />
-          <app-button
-            block
-            class="card-btn metamask d-flex"
-            :loading="authStore.loading"
-            variant="secondary"
-            text="Login with Metamask "
-            img="/images/metamask.png"
-            @click="authStore.handleMetaSignIn"
-          />
-        </div>
-      </template>
-    </app-card>
+    <div class="flex w-full justify-center">
+      <div class="flex w-full max-w-[500px]">
+        <app-card
+          title="login"
+          :img="{ src: 'logo.png', height: 100, width: 100, alt: 'gighub' }"
+          no-edit
+        >
+          <template #content>
+            <div class="flex flex-col w-full justify-center">
+              <div class="flex flex-col gap-2 mb-4">
+                <app-inputs-text-field
+                  v-model="email"
+                  label="Email"
+                  name="email"
+                  :error-message="errors.email"
+                  v-bind="emailProps"
+                />
+                <app-inputs-text-field
+                  v-model="password"
+                  label="Password"
+                  name="password"
+                  type="password"
+                  :error-message="errors.password"
+                  v-bind="passwordProps"
+                />
+              </div>
+              <div class="flex flex-col gap-3">
+                <app-button
+                  class="w-full"
+                  text="Login"
+                  :loading="authStore.loading"
+                  :disabled="disableButton"
+                  @click="submit"
+                />
+                <app-button
+                  block
+                  class="card-btn metamask flex"
+                  :loading="authStore.loading"
+                  variant="secondary"
+                  text="Login with Metamask "
+                  img="/images/metamask.png"
+                  @click="authStore.handleMetaSignIn"
+                />
+              </div>
+            </div>
+          </template>
+        </app-card>
+      </div>
+    </div>
   </div>
 </template>
 
