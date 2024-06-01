@@ -98,7 +98,7 @@ export const useAuthStore = defineStore("auth", () => {
 
     try {
       // Make the request to the login endpoint
-      const { user, address, accessToken } = await linkWallet();
+      const { user, accessToken } = await linkWallet();
 
       if (!(accessToken && user)) {
         router.push({ path: "/register" });
@@ -142,8 +142,8 @@ export const useAuthStore = defineStore("auth", () => {
   watch(
     loggedUser,
     () => {
-      console.log(loggedUser.value);
-      storedUser.value = JSON.stringify(loggedUser.value);
+      console.log({ loggedUser: loggedUser.value });
+      storedUser.value = loggedUser.value;
     },
     { deep: true }
   );

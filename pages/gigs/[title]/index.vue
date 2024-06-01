@@ -29,7 +29,7 @@
         :user-id="authStore.loggedUser._id"
       />
 
-      <div>
+      <div v-if="gigStore.loadedGig.propositions.length !== 0">
         <gigs-cards-proposal
           v-for="(item, index) in gigStore.loadedGig.propositions"
           :key="index"
@@ -43,6 +43,14 @@
             $router.push(`/gigs/${gigStore.loadedGig?.title}/propositions`)
           "
         />
+      </div>
+      <div v-else>
+        <span v-if="gigStore.isOwner">
+          There are no proposals as for now, keep waiting!
+        </span>
+        <span v-else
+          >It's a gold mine, you're can be the first one to dig it!</span
+        >
       </div>
     </div>
   </div>

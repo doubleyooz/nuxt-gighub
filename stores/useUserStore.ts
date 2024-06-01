@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import type { User } from "~/models/user.model";
+import type { User, LooseUser } from "~/models/user.model";
 
 export interface LoadedUser extends User {}
 export const useUserStore = defineStore("user", () => {
@@ -17,11 +17,6 @@ export const useUserStore = defineStore("user", () => {
   );
 
   async function loadUser(username: string) {
-    console.log({
-      loadedUser: loadedUser.value,
-      username,
-      bool: loadedUser.value?.name === username,
-    });
     if (loadedUser.value?.name === username) return;
 
     const result = await fetchApi(`users?name=${username}`);
@@ -52,9 +47,11 @@ export const useUserStore = defineStore("user", () => {
 
     loadedUser.value.wallet = response.data.address;
   }
-  const isLoggedUser = computed(
-    () => loggedUser.value?.name === loadedUser.value?.name
-  );
+
+  const isLoggedUser = computed(() => {
+    console.log({ loggedUser: loggedUser.value, loadedUser: loadedUser.value });
+    return loggedUser.value?.name === loadedUser.value?.name;
+  });
 
   async function unloadUser() {
     loadedUser.value = undefined;
@@ -68,6 +65,34 @@ export const useUserStore = defineStore("user", () => {
     )
   );
 
+  const updateLoggedUser = async (body: LooseUser) => {
+    if (!isLoggedUser.value) return;
+    try {
+      const user: User = (
+        await fetchApi(`users`, {
+          method: "PUT",
+          body: body,
+        })
+      ).data;
+
+      loggedUser.value = { ...loggedUser.value, ...user };
+      loadedUser.value = { ...loadedUser.value, ...user };
+    } catch (error) {
+      console.error("Error:", error);
+      // Handle the error, e.g., show an error message to the user
+    }
+  };
+
+  watch(
+    loggedUser,
+    () => {
+      console.log({ updatedLoggedUser: loggedUser.value });
+      console.log({ updatedLoadedUser: loadedUser.value });
+      storedUser.value = loggedUser.value;
+    },
+    { deep: true }
+  );
+
   return {
     loadUser,
     loadUsers,
@@ -76,5 +101,6 @@ export const useUserStore = defineStore("user", () => {
     unloadUser,
     setWallet,
     loadedUser,
+    updateLoggedUser,
   };
 });

@@ -37,6 +37,7 @@ export interface CardComponentType extends HeaderCardComponentType {
   noFooter?: boolean;
   variant?: CardVariant;
   noHeader?: boolean;
+  absolute?: boolean;
 }
 
 const props = withDefaults(defineProps<CardComponentType>(), {

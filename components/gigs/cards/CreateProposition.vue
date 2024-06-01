@@ -24,14 +24,13 @@
           type="number"
           v-bind="deadlineProps"
         />
+        <app-button
+          class="w-full"
+          text="Create New Proposition"
+          :disabled="disableButton"
+          @click="submit"
+        />
       </div>
-
-      <app-button
-        class="w-full"
-        text="Create New Proposition"
-        :disabled="disableButton"
-        @click="submit"
-      />
     </template>
   </app-card>
 </template>

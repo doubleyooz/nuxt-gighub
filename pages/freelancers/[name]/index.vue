@@ -34,20 +34,27 @@
       <template #content>
         <div class="flex flex-col gap-6 w-full justify-between">
           <users-description
-            :text="userStore.loadedUser.title"
+            :value="userStore.loadedUser.title"
             :no-edit="!userStore.isLoggedUser"
             :empty-text="'No title added'"
             name="title"
             value-styling="leading-7 text-2xl tracking-wide"
             items-center
+            @click:save="
+              (value) => userStore.updateLoggedUser({ title: value })
+            "
           />
+
           <users-description
-            :text="userStore.loadedUser.description"
+            :value="userStore.loadedUser.description"
             :no-edit="!userStore.isLoggedUser"
             type="textarea"
             name="description"
             justify-between
             empty-text="No description was added"
+            @click:save="
+              (value) => userStore.updateLoggedUser({ description: value })
+            "
           />
         </div>
       </template>
@@ -79,8 +86,6 @@ const router = useRouter();
 const config = useRuntimeConfig();
 const userStore = useUserStore();
 const authStore = useAuthStore();
-
-const {} = useFormRules();
 
 const loading = ref(false);
 const { setAccessToken, refreshAccessToken } = useAccessToken(

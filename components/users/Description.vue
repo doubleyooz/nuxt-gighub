@@ -33,18 +33,29 @@
       <span v-else class="text-slate-400">{{ emptyText }}</span>
     </div>
     <div v-if="!noEdit" class="flex flex-wrap gap-2 min-w-fit">
+      <div v-if="edit" class="flex items-center flex-wrap gap-2 mt-1 min-w-fit">
+        <app-button
+          icon="mdi:check"
+          variant="success"
+          pressed
+          rounded
+          outline
+          @click="saveEdit"
+        />
+        <app-button
+          icon="mdi:close"
+          variant="error"
+          pressed
+          rounded
+          outline
+          @click="cancelEdit"
+        />
+      </div>
+
       <app-button
-        :icon="edit ? 'mdi:check' : 'mdi:pen'"
-        :variant="edit ? 'success' : 'primary'"
-        pressed
-        rounded
-        outline
-        @click="toggleEdit"
-      />
-      <app-button
-        v-if="edit"
-        icon="mdi:close"
-        variant="error"
+        v-else
+        icon="mdi:pen"
+        variant="primary"
         pressed
         rounded
         outline
@@ -86,13 +97,15 @@ const props = withDefaults(defineProps<UserDescriptionComponentType>(), {
   schema: undefined,
 });
 
+const emit = defineEmits(["click:save", "click:cancel"]);
+
 const edit = ref(false);
 
 const { controlledValues, handleSubmit, defineField, errors } = useForm({
   validationSchema: props.schema,
   initialValues: { [props.name]: props.value },
 });
-
+const originalValue = ref(props.value);
 const [thisValue, valueProps] = defineField(props.name);
 
 const finalText = computed(() =>
@@ -101,6 +114,21 @@ const finalText = computed(() =>
 
 const toggleEdit = () => {
   edit.value = !edit.value;
+};
+
+const saveEdit = () => {
+  if (edit.value) {
+    originalValue.value = thisValue.value;
+    emit("click:save", thisValue.value);
+  }
+
+  toggleEdit();
+};
+
+const cancelEdit = () => {
+  toggleEdit();
+  thisValue.value = originalValue.value;
+  emit("click:cancel");
 };
 
 watch(thisValue, () => {

@@ -1,5 +1,5 @@
 <template>
-  <app-card title="new Gig" outline>
+  <app-card title="new Gig" absolute outline>
     <template #content>
       <div class="flex flex-col gap-2 mb-4">
         <app-inputs-text-field
@@ -22,15 +22,14 @@
           type="number"
           v-bind="budgetProps"
         />
+        <app-button
+          class="w-full"
+          text="Create new Gig"
+          :loading="loading"
+          :disabled="disableButton"
+          @click="submit"
+        />
       </div>
-
-      <app-button
-        class="w-full"
-        text="Create new Gig"
-        :loading="loading"
-        :disabled="disableButton"
-        @click="submit"
-      />
     </template>
   </app-card>
 </template>
