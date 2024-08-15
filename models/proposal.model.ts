@@ -1,3 +1,4 @@
+import type { Skill } from "./skill.model";
 import type { User } from "./user.model";
 
 type DEFAULT_STATE = 0;
@@ -24,6 +25,7 @@ export interface Proposal {
   _id: string;
   budget: number;
   status: PROPOSAL_STATUS;
+  skills?: Skill[];
   deadline: number; // number of days as for now
   user: User;
   gigId?: string;

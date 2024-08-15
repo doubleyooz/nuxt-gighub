@@ -32,36 +32,7 @@
       <span v-if="finalText">{{ finalText }}</span>
       <span v-else class="text-slate-400">{{ emptyText }}</span>
     </div>
-    <div v-if="!noEdit" class="flex flex-wrap gap-2 min-w-fit">
-      <div v-if="edit" class="flex items-center flex-wrap gap-2 mt-1 min-w-fit">
-        <app-button
-          icon="mdi:check"
-          variant="success"
-          pressed
-          rounded
-          outline
-          @click="saveEdit"
-        />
-        <app-button
-          icon="mdi:close"
-          variant="error"
-          pressed
-          rounded
-          outline
-          @click="cancelEdit"
-        />
-      </div>
-
-      <app-button
-        v-else
-        icon="mdi:pen"
-        variant="primary"
-        pressed
-        rounded
-        outline
-        @click="toggleEdit"
-      />
-    </div>
+    <app-buttons-edit @click:save="saveEdit" @click:cancel="cancelEdit" />
   </div>
 </template>
 <script setup lang="ts">

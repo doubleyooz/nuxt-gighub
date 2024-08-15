@@ -21,9 +21,9 @@ export const useMetamask = (baseUrl: string) => {
         return {};
       }
       const provider = new ethers.BrowserProvider(window.ethereum);
-
+      console.log({ provider });
       const signer = await withTimeout(12000, provider.getSigner());
-
+      console.log({ signer });
       const response = await fetch(`${baseUrl}/message`, {
         headers: authHeaders().headers,
         credentials: "include",
@@ -47,7 +47,7 @@ export const useMetamask = (baseUrl: string) => {
       };
 
       const path = userId ? "register-wallet" : "metamask";
-      console.log({ userId, path });
+
       try {
         const rawResponse = await fetch(`${baseUrl}/${path}`, {
           method: "POST",
@@ -62,11 +62,12 @@ export const useMetamask = (baseUrl: string) => {
         if (!rawResponse.ok) {
           throw new Error("Message token failed");
         }
+
         provider.destroy();
         if (userId) userStore.setWallet(signer.address);
 
         const content = await rawResponse.json();
-
+        console.log({ userId, content });
         return {
           user: content.data,
           address: signer.address,

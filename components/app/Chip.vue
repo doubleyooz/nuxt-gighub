@@ -35,6 +35,7 @@ export interface ChipComponentType {
   rounded?: boolean;
   prependIcon?: string;
   appendIcon?: string;
+  hideOnClose?: boolean;
   size?: Size;
   icon?: string;
 }
@@ -43,6 +44,7 @@ const emit = defineEmits(["click:close", "click:chip"]);
 const props = withDefaults(defineProps<ChipComponentType>(), {
   variant: "primary",
   size: "medium",
+  hideOnClose: false,
   text: undefined,
   prependIcon: undefined,
   appendIcon: undefined,
@@ -81,8 +83,8 @@ const sizeHeightPadding = () => {
 const isHidden = ref(false);
 
 const handleClick = () => {
-  isHidden.value = true;
-  emit("click:close");
+  if (props.hideOnClose) isHidden.value = true;
+  emit("click:close", props.text);
 };
 
 const variants: Record<Variant, string> = {

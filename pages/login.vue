@@ -35,6 +35,7 @@
                   :disabled="disableButton"
                   @click="submit"
                 />
+                <w3m-button />
                 <app-button
                   block
                   class="card-btn metamask flex"

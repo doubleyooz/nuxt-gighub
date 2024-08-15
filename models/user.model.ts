@@ -1,4 +1,5 @@
 import type { ServerImage } from "./image.model";
+import type { Skill } from "./skill.model";
 
 export interface User {
   email: string;
@@ -17,7 +18,7 @@ export interface LooseUser {
   title?: string;
   picture?: ServerImage;
   _id?: string;
-  skills?: string[];
+  skills?: Skill[];
   description?: string;
   wallet?: string | null;
 }

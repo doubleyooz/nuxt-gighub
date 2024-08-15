@@ -59,6 +59,9 @@
         </div>
       </template>
     </app-card>
+    <pre>
+      {{ userStore.loadedUser }}
+    </pre>
     <app-skills
       :skills="userStore.loadedUser.skills"
       :can-edit="userStore.isLoggedUser"
