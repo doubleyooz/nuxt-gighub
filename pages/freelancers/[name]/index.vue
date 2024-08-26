@@ -3,12 +3,7 @@
     <app-card outline no-header>
       <template #content>
         <div class="flex">
-          <app-user-avatar
-            class="h-20 w-20 mr-4"
-            :src="userStore.userPicture"
-            rounded
-            show-border
-          />
+          <app-user-avatar class="h-20 w-20 mr-4" :src="userStore.userPicture" rounded show-border />
 
           <div class="flex flex-col items-top">
             <span class="text-3xl font-bold">{{
@@ -18,61 +13,35 @@
           </div>
         </div>
         <users-chips-rating text="4.8" />
-        <app-button
-          v-if="userStore.isLoggedUser"
-          class="hidden xs:flex"
-          :text="'Profile settings'"
-          size="x-small"
-          rounded
-          @click="
+        <app-button v-if="userStore.isLoggedUser" class="hidden xs:flex" :text="'Profile settings'" size="x-small"
+          rounded @click="
             router.push(`/freelancers/${userStore.loadedUser?.name}/settings`)
-          "
-        />
+            " />
       </template>
     </app-card>
     <app-card outline no-header>
       <template #content>
         <div class="flex flex-col gap-6 w-full justify-between">
-          <users-description
-            :value="userStore.loadedUser.title"
-            :no-edit="!userStore.isLoggedUser"
-            :empty-text="'No title added'"
-            name="title"
-            value-styling="leading-7 text-2xl tracking-wide"
-            items-center
-            @click:save="
-              (value) => userStore.updateLoggedUser({ title: value })
-            "
-          />
+          <app-inputs-editable-text-field inline-edit :value="userStore.loadedUser.title"
+            :no-edit="!userStore.isLoggedUser" :empty-text="'No title added'" name="title"
+            value-styling="leading-7 text-2xl tracking-wide" items-center @click:save="(value) => userStore.updateLoggedUser({ title: value })
+              " />
 
-          <users-description
-            :value="userStore.loadedUser.description"
-            :no-edit="!userStore.isLoggedUser"
-            type="textarea"
-            name="description"
-            justify-between
-            empty-text="No description was added"
-            @click:save="
-              (value) => userStore.updateLoggedUser({ description: value })
-            "
-          />
+          <app-inputs-editable-text-field inline-edit :value="userStore.loadedUser.description"
+            :no-edit="!userStore.isLoggedUser" type="textarea" name="description" justify-between
+            empty-text="No description was added" @click:save="(value) => userStore.updateLoggedUser({ description: value })
+              " />
         </div>
       </template>
     </app-card>
     <pre>
-      {{ userStore.loadedUser }}
-    </pre>
-    <app-skills
-      :skills="userStore.loadedUser.skills"
-      :can-edit="userStore.isLoggedUser"
-    />
+  {{ userStore.loadedUser }}
+</pre>
+    <app-skills :skills="userStore.loadedUser.skills" :can-edit="userStore.isLoggedUser" />
     <app-card title="Metamask" outline>
       <template #content>
-        <users-settings-wallet
-          :address="userStore.loadedUser.wallet"
-          @update:wallet="authStore.handleMetaSignIn()"
-          @remove:wallet="userStore.setWallet(null)"
-        />
+        <users-settings-wallet :address="userStore.loadedUser.wallet" @update:wallet="authStore.handleMetaSignIn()"
+          @remove:wallet="userStore.setWallet(null)" />
       </template>
     </app-card>
   </div>
