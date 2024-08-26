@@ -3,6 +3,7 @@
     v-if="gigStore.loadedGig"
     class="grid grid-cols-3 gap-4 h-full px-6 pt-4 w-full"
   >
+
     <div class="col-span-2">
       <div class="flex text-3xl justify-between gap-2">
         <span class="font-semibold">{{ gigStore.loadedGig.title }}</span>
