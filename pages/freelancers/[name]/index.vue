@@ -38,7 +38,7 @@
   {{ userStore.loadedUser }}
 </pre>
     <app-skills :skills="userStore.loadedUser.skills" :can-edit="userStore.isLoggedUser" />
-    <app-card title="Metamask" outline>
+    <app-card header-title="Metamask" outline>
       <template #content>
         <users-settings-wallet :address="userStore.loadedUser.wallet" @update:wallet="authStore.handleMetaSignIn()"
           @remove:wallet="userStore.setWallet(null)" />

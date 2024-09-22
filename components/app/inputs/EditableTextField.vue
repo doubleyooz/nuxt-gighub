@@ -1,23 +1,44 @@
 <template>
-  <div class="flex w-full gap-3" :class="[
-    justifyBetween ? 'justify-between' : '',
-    itemsCenter && !edit ? 'items-center' : 'items-start',
-  ]">
-    <div v-if="edit && !noEdit" class="w-full" :class="[type === 'textarea' ? 'h-full' : '', bold ? 'font-bold' : '']">
-      <app-inputs-text-field v-model="thisValue" :name="name" :type="type" :placeholder="name" v-bind="valueProps"
-        :value-styling="valueStyling" />
+  <div
+    class="flex w-full gap-3"
+    :class="[
+      justifyBetween ? 'justify-between' : '',
+      itemsCenter && !edit ? 'items-center' : 'items-start',
+    ]"
+  >
+    <div
+      v-if="edit && !noEdit"
+      class="w-full"
+      :class="[type === 'textarea' ? 'h-full' : '', bold ? 'font-bold' : '']"
+    >
+      <app-inputs-text-field
+        v-model="thisValue"
+        :name="name"
+        :type="type"
+        :placeholder="name"
+        v-bind="valueProps"
+        :value-styling="valueStyling"
+      />
     </div>
-    <div v-else class="text-ellipsis overflow-hidden text-nowrap" :class="[
-      valueStyling,
-      type === 'textarea' ? 'h-full' : '',
-      bold ? 'font-bold' : '',
-    ]">
+    <div
+      v-else
+      class="text-ellipsis overflow-hidden text-nowrap"
+      :class="[
+        valueStyling,
+        type === 'textarea' ? 'h-full' : '',
+        bold ? 'font-bold' : '',
+      ]"
+    >
       <span v-if="finalText">{{ finalText }}</span>
       <span v-else class="text-slate-400">{{ emptyText }}</span>
     </div>
 
-    <app-buttons-edit v-if="!noEdit && inlineEdit" @click:editing="toggleEdit" @click:save="saveEdit"
-      @click:cancel="cancelEdit" />
+    <app-buttons-edit
+      v-if="!noEdit && inlineEdit"
+      @click:editing="toggleEdit"
+      @click:save="saveEdit"
+      @click:cancel="cancelEdit"
+    />
   </div>
 </template>
 <script setup lang="ts">
@@ -25,7 +46,8 @@ import { useForm } from "vee-validate";
 import type { AnyObject, NumberSchema, StringSchema } from "yup";
 import type { TextFieldProps } from "./TextField.vue";
 
-export interface UserDescriptionComponentType extends TextFieldProps {
+export interface UserDescriptionComponentType
+  extends Omit<TextFieldProps, "modelValue"> {
   value?: string | number;
   emptyText?: string;
   appendText?: string;
@@ -38,8 +60,8 @@ export interface UserDescriptionComponentType extends TextFieldProps {
   isEditing?: boolean;
   inlineEdit?: boolean;
   schema?:
-  | StringSchema<string | undefined, AnyObject, undefined, "">
-  | NumberSchema<number | undefined, AnyObject, undefined, "">;
+    | StringSchema<string | undefined, AnyObject, undefined, "">
+    | NumberSchema<number | undefined, AnyObject, undefined, "">;
 }
 
 const props = withDefaults(defineProps<UserDescriptionComponentType>(), {
@@ -73,7 +95,6 @@ const toggleEdit = () => {
 };
 
 const saveEdit = () => {
-
   if (edit.value) {
     originalValue.value = thisValue.value;
     emit("click:save", thisValue.value);
@@ -93,6 +114,6 @@ watch(thisValue, () => {
 });
 
 watch(isEditing, () => {
-  edit.value = props.isEditing
-})
+  edit.value = props.isEditing;
+});
 </script>

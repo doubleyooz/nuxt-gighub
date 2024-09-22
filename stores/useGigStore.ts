@@ -144,6 +144,7 @@ export const useGigStore = defineStore("gig", () => {
     loadedGig,
     loadedGigs,
     isOwner,
+    loading,
     createGig,
     fetchGigs,
     updatePropositionStatus,

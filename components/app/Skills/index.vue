@@ -1,5 +1,5 @@
 <template>
-    <app-card title="Skills" outline>
+    <app-card header-title="Skills" outline>
         <template #content>
             <div class="flex flex-col w-full gap-2 p-1 overflow-auto bg-red-500">
                 <app-inputs-autocomplete v-if="canEdit" v-model="search" v-model:items="skills" name="skill"

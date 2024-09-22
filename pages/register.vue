@@ -2,7 +2,7 @@
   <div class="grid xs:grid-cols-2 h-full">
     <div class="hidden xs:flex w-full bg-primary-800" />
     <app-card
-      title="Sign up"
+      header-title="Sign up"
       :img="{ src: 'logo.png', height: 100, width: 100, alt: 'gighub' }"
       no-edit
     >

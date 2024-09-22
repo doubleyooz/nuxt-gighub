@@ -7,14 +7,14 @@
       <slot v-if="titleSlot" name="title" />
       <div v-else class="flex items-end w-full gap-3 flex-wrap overflow-hidden">
         <span
-          v-if="title"
+          v-if="headerTitle"
           class="text-lg font-semibold overflow-hidden text-ellipsis text-nowrap"
-          >{{ title }}</span
+          >{{ headerTitle }}</span
         >
         <span
-          v-if="description"
+          v-if="headerDescription"
           class="overflow-hidden text-ellipsis text-nowrap"
-          >{{ description }}</span
+          >{{ headerDescription }}</span
         >
       </div>
     </div>
@@ -23,9 +23,8 @@
 
 <script setup lang="ts">
 export interface HeaderCardComponentType {
-  title?: string;
-
-  description?: string;
+  headerTitle?: string;
+  headerDescription?: string;
   titleSlot?: boolean;
   img?: imgProps;
 }
@@ -39,7 +38,7 @@ export type imgProps = {
 
 const props = withDefaults(defineProps<HeaderCardComponentType>(), {
   title: undefined,
-  description: undefined,
+  headerDescription: undefined,
   img: undefined,
 });
 </script>

@@ -2,6 +2,7 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ["@nuxt/eslint", "@nuxtjs/tailwindcss", "nuxt-icon", "@pinia/nuxt"],
+
   pinia: {
     autoImports: ["defineStore", "storeToRefs"],
   },
@@ -12,4 +13,6 @@ export default defineNuxtConfig({
       imageServer: process.env.IMAGE_SERVER || "http://localhost:3001/public", // Public runtime config
     },
   },
+
+  compatibilityDate: "2024-09-19",
 });

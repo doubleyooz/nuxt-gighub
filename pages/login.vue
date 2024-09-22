@@ -4,7 +4,7 @@
     <div class="flex w-full justify-center">
       <div class="flex w-full max-w-[500px]">
         <app-card
-          title="login"
+          header-title="login"
           :img="{ src: 'logo.png', height: 100, width: 100, alt: 'gighub' }"
           no-edit
         >

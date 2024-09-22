@@ -1,5 +1,5 @@
 <template>
-  <app-card title="New Proposition">
+  <app-card header-title="New Proposition">
     <template #content>
       <div class="flex flex-col gap-2 mb-4">
         <app-inputs-text-field

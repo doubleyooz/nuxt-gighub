@@ -9,8 +9,8 @@
   >
     <app-card-header
       v-if="!noHeader"
-      :title="title"
-      :description="description"
+      :header-title="headerTitle"
+      :header-description="headerDescription"
       :img="img"
       :title-slot="titleSlot"
       @click:edit="emit('click:edit')"
