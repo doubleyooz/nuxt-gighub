@@ -1,43 +1,52 @@
 import { ethers } from "ethers";
+import { ref } from "vue";
+import type { Eip1193Provider } from "ethers";
 
 declare global {
   interface Window {
-    ethereum: any;
+      ethereum?: Eip1193Provider;
   }
 }
 
+// Define response types for clarity
+interface MessageResponse {
+  metadata?: { token?: string };
+}
+
+interface WalletResponse {
+  data: any; // Replace with your User type from ~/models/user.model
+  metadata: { accessToken: string };
+}
+
+
 export const useMetamask = (baseUrl: string) => {
   const userStore = useUserStore();
-
   const { authHeaders } = useAccessToken(baseUrl);
   const loading = ref(false);
 
   const linkWallet = async (userId?: string | number) => {
-    try {
-      loading.value = true;
-      if (!window.ethereum) {
-        // setMessage(i18n.t("pages.login.metamask.notFound"), "red", true);
+    loading.value = true;
 
-        return {};
-      }
+    try {
+      if (!window.ethereum) 
+        throw new Error('Metamask not found');
+
       const provider = new ethers.BrowserProvider(window.ethereum);
-      console.log({ provider });
       const signer = await withTimeout(12000, provider.getSigner());
-      console.log({ signer });
-      const response = await fetch(`${baseUrl}/message`, {
+ 
+     // Fetch message token
+      const { data: messageData, error: messageError } = await useFetch<MessageResponse>('/message', {
+        baseURL: baseUrl,
         headers: authHeaders().headers,
-        credentials: "include",
+        credentials: 'include',
       });
 
       // Check if the request was successful
-      if (!response.ok) {
-        throw new Error("Message token failed");
+     if (messageError.value || !messageData.value?.metadata?.token) {
+        throw new Error('Failed to fetch message token');
       }
 
-      // If successful, you can process the response here
-      const data = await response.json();
-      console.log({ refresh: data });
-      const token = data.metadata?.token;
+      const token = messageData.value.metadata.token;
       const signedMessage = await signer.signMessage(token);
 
       const commonData = {
@@ -48,40 +57,41 @@ export const useMetamask = (baseUrl: string) => {
 
       const path = userId ? "register-wallet" : "metamask";
 
-      try {
-        const rawResponse = await fetch(`${baseUrl}/${path}`, {
-          method: "POST",
-          headers: authHeaders().headers,
-          credentials: "include",
-          body: JSON.stringify({
-            ...commonData,
-          }),
-        });
 
-        // Check if the request was successful
-        if (!rawResponse.ok) {
-          throw new Error("Message token failed");
-        }
+      // Post signed message
+      const { data: walletData, error: walletError } = await useFetch<WalletResponse>(`/${path}`, {
+        baseURL: baseUrl,
+        method: 'POST',
+        headers: authHeaders().headers,
+        credentials: 'include',
+        body: commonData,
+      });
 
-        provider.destroy();
-        if (userId) userStore.setWallet(signer.address);
 
-        const content = await rawResponse.json();
-        console.log({ userId, content });
-        return {
-          user: content.data,
-          address: signer.address,
-          accessToken: content.metadata.accessToken,
-        };
-      } catch (err: any) {
-        console.log(err);
-        await userStore.setWallet(signer.address);
-        return {
-          address: signer.address,
-        };
+
+      if (walletError.value || !walletData.value) {
+        throw new Error('Failed to link wallet');
       }
-    } catch (err: any) {
-      console.log(err);
+
+      await provider.destroy();
+
+      provider.destroy();
+      if (userId) userStore.setWallet(signer.address);
+      console.log({ userId, content: walletData.value });
+      return {
+        user: walletData.value.data,
+        address: signer.address,
+        accessToken: walletData.value.metadata.accessToken,
+      };
+      } catch (err: any) {
+        console.error('Metamask error:', err);
+        // If signer exists, try to set wallet address in case of partial success
+        if (err.address) {
+          await userStore.setWallet(err.address);
+          return { address: err.address };
+        }
+        throw err; // Propagate error to caller
+      
     } finally {
       loading.value = false;
     }
@@ -91,8 +101,8 @@ export const useMetamask = (baseUrl: string) => {
     try {
       await userStore.setWallet(null);
     } catch (err) {
-      // setMessage(err as string, "red", true);
-      console.log(err);
+      console.error('Unlink wallet error:', err);
+      throw err; // Propagate error to caller
     }
   };
 

@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import type { User } from "~/models/user.model";
 
 export const useAuthStore = defineStore("auth", () => {
@@ -8,62 +8,63 @@ export const useAuthStore = defineStore("auth", () => {
   const { fetchApi, setSafeAccessToken, setAccessToken } = useAccessToken(
     config.public.appServer
   );
-  const route = useRoute();
-  const router = useRouter();
-  const redirect =
-    (route.query.redirect as string) || useCookie("redirect").value;
-
   const { linkWallet } = useMetamask(config.public.appServer);
 
   const loading = ref(false);
-  const storedUser: Ref<User | null> = useCookie("loggedUser");
 
-  const loggedUser = ref<User | null>(
-    storedUser.value ? storedUser.value : null
-  );
+  const storedUser = useCookie<User | null>("loggedUser", {
+    path: "/",
+    maxAge: 60 * 60 * 24 * 7, // 7 days
+    sameSite: "strict",
+    encode: (value) => JSON.stringify(value),
+    decode: (value) => (value ? JSON.parse(value) : null),
+  });
 
-  const handleSignIn = async (email: string, password: string) => {
+  const loggedUser = ref<User | null>(storedUser.value ?? null);
+
+
+  const handleSignIn = async (email: string, password: string, redirectPath?: string) => {
     loading.value = true;
     const encodedCredentials = btoa(`${email}:${password}`);
 
-    // Set up the request options
-    const requestOptions = {
-      method: "GET", // or 'GET', depending on your API
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Basic ${encodedCredentials}`,
-      },
-      // If you need to send a body with your request, uncomment the following line
-      // body: JSON.stringify({ /* your data here */ })
-    };
 
     try {
       // Make the request to the login endpoint
-      const response = await fetch(
-        `${config.public.appServer}/sign-in`,
-        requestOptions
+      const { data, error } = await useFetch<{ data: User, metadata?: { accessToken?: string } }>(
+        '/sign-in',
+        {
+          baseURL: config.public.appServer,
+          method: 'GET',
+          headers: {
+            'content-type': 'application/json',
+            'Authorization': `Basic ${encodedCredentials}`,
+          },
+          credentials: 'include',
+        }
       );
 
       // Check if the request was successful
-      if (!response.ok) {
-        throw new Error("Login failed");
+      if (error.value || !data.value) {
+        throw new Error('Login failed');
       }
 
-      // If successful, you can process the response here
-      const { data, metadata } = await response.json();
-      console.log({ auth: data, metadata });
-      setSafeAccessToken(metadata?.accessToken);
-      loggedUser.value = data;
+      // If successful, you can process the response here      
+      console.log({ auth: data.value, metadata: data.value.metadata });
+
+      setSafeAccessToken(data.value.metadata?.accessToken);
+      loggedUser.value = data.value.data;
+      storedUser.value = data.value.data;
+
       // Redirect the user or perform other actions as needed
-      if (redirect) {
-        router.push(redirect);
-        useCookie("redirect").value = null;
+      if (redirectPath) {
+        return navigateTo(redirectPath);
       } else {
-        router.push("/");
+        return navigateTo('/');
       }
     } catch (error) {
       console.error("Error:", error);
       // Handle the error, e.g., show an error message to the user
+      throw error;
     } finally {
       loading.value = false;
     }
@@ -75,7 +76,7 @@ export const useAuthStore = defineStore("auth", () => {
     name: string;
   }) => {
     loading.value = true;
-    console.log(data);
+
     try {
       // Make the request to the login endpoint
 
@@ -84,16 +85,17 @@ export const useAuthStore = defineStore("auth", () => {
         body: { ...data },
       });
 
-      router.push("/login");
+      return navigateTo('/login');
     } catch (error) {
       console.error("Error:", error);
       // Handle the error, e.g., show an error message to the user
+      throw error;
     } finally {
       loading.value = false;
     }
   };
 
-  const handleMetaSignIn = async () => {
+  const handleMetaSignIn = async (redirectPath?: string) => {
     loading.value = true;
 
     try {
@@ -101,24 +103,22 @@ export const useAuthStore = defineStore("auth", () => {
       const { user, accessToken } = await linkWallet();
 
       if (!(accessToken && user)) {
-        router.push({ path: "/register" });
-        return;
+        return navigateTo('/register');
       }
 
-      console.log(user);
+      console.log({ user });
 
       if (accessToken) setAccessToken(accessToken);
-      if (user) loggedUser.value = { ...loggedUser.value, ...user };
-
-      if (redirect) {
-        router.push(redirect);
-        useCookie("redirect").value = null;
-      } else {
-        router.push("/");
+          if (user) {
+        loggedUser.value = { ...loggedUser.value, ...user };
+        storedUser.value = loggedUser.value;
       }
+      return navigateTo(redirectPath ?? '/');
+     
     } catch (error) {
       console.error("Error:", error);
       // Handle the error, e.g., show an error message to the user
+      throw error;
     } finally {
       loading.value = false;
     }
@@ -135,15 +135,15 @@ export const useAuthStore = defineStore("auth", () => {
   const logout = async () => {
     setAccessToken(null);
     loggedUser.value = null;
-
+    storedUser.value = null;
     console.log("logout");
   };
 
   watch(
     loggedUser,
-    () => {
-      console.log({ loggedUser: loggedUser.value });
-      storedUser.value = loggedUser.value;
+    (newUser) => {
+      console.log({ loggedUser: newUser });
+      storedUser.value = newUser;
     },
     { deep: true }
   );

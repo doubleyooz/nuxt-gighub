@@ -1,6 +1,3 @@
-ntrc.cjs
-657 B
-
 module.exports = {
 
   root: true,
@@ -21,7 +18,7 @@ module.exports = {
 
   },
 
-  extends: ['@nuxtjs/eslint-config-typescript', 'plugin:prettier/recommended'],
+  extends: ['@nuxtjs/eslint', 'plugin:prettier/recommended'],
 
   plugins: [],
 
